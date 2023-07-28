@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'bugdet.dart';
+import 'income.dart';
 
 void main() {
   runApp(const MyApp());
@@ -63,8 +64,9 @@ class HomePage extends StatelessWidget {
               child: Padding(
                 padding: const EdgeInsets.all(10),
                 child: ButtonWidget(
-                  label: 'Report',
+                  label: 'Income',
                   onPressed: () {
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => const IncomePage()) );
                     // Handle Report button press here
                   },
                 ),
@@ -76,8 +78,9 @@ class HomePage extends StatelessWidget {
               child: Padding(
                 padding: const EdgeInsets.all(10),
                 child: ButtonWidget(
-                  label: 'Income',
+                  label: 'Report',
                   onPressed: () {
+                    //Navigator.push(context, MaterialPageRoute(builder: (context) => const IncomePage()) );
                     // Handle Income button press here
                   },
                 ),
