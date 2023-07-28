@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import 'bugdet.dart';
+
 void main() {
   runApp(const MyApp());
 }
@@ -36,6 +38,7 @@ class HomePage extends StatelessWidget {
                 child: ButtonWidget(
                   label: 'Budget',
                   onPressed: () {
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => const BudgetApp()) );
                     // Handle Budget button press here
                   },
                 ),

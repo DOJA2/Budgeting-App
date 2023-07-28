@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 
 void main() {
-  runApp(MyApp());
+  runApp(const BudgetApp());
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+class BudgetApp extends StatelessWidget {
+  const BudgetApp({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -108,7 +108,7 @@ class _BudgetPageState extends State<BudgetPage> {
   void _addNewEvent(BuildContext context) async {
     BudgetEvent? newEvent = await showDialog(
       context: context,
-      builder: (context) => AddEventDialog(),
+      builder: (context) => const AddEventDialog(),
     );
 
     if (newEvent != null) {
@@ -129,12 +129,17 @@ class BudgetEvent {
 }
 
 class AddEventDialog extends StatefulWidget {
+  const AddEventDialog({super.key});
+
   @override
+  // ignore: library_private_types_in_public_api
   _AddEventDialogState createState() => _AddEventDialogState();
 }
 
 class _AddEventDialogState extends State<AddEventDialog> {
+  // ignore: prefer_final_fields
   TextEditingController _dutyController = TextEditingController();
+  // ignore: prefer_final_fields
   TextEditingController _amountController = TextEditingController();
 
   @override
