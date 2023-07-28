@@ -5,16 +5,21 @@ void main() {
 }
 
 class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return const MaterialApp(
       home: BudgetPage(),
     );
   }
 }
 
 class BudgetPage extends StatefulWidget {
+  const BudgetPage({super.key});
+
   @override
+  // ignore: library_private_types_in_public_api
   _BudgetPageState createState() => _BudgetPageState();
 }
 
@@ -36,7 +41,7 @@ class _BudgetPageState extends State<BudgetPage> {
             // Display the total amount at the bottom of the list
             return ListTile(
               title: const Text('Total Amount'),
-              subtitle: Text('\$${totalAmount.toStringAsFixed(2)}'),
+              subtitle: Text('Tsh ${totalAmount.toStringAsFixed(2)}'),
               onTap: () {
                 // Implement undo for the last deleted event (if available)
                 if (_deletedEventsStack.isNotEmpty) {
