@@ -29,7 +29,8 @@ android {
     namespace "com.example.saving_money"
     compileSdkVersion flutter.compileSdkVersion
     ndkVersion flutter.ndkVersion
-
+    //defaultConfig minSdkVersion 19
+    
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
