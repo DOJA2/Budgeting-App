@@ -1,53 +1,53 @@
 import 'package:flutter/material.dart';
 
 void main() {
-  runApp(const BudgetApp());
+  runApp(const ExpensesApp());
 }
 
-class BudgetApp extends StatelessWidget {
-  const BudgetApp({super.key});
+class ExpensesApp extends StatelessWidget {
+  const ExpensesApp({super.key});
 
   @override
   Widget build(BuildContext context) {
     return const MaterialApp(
-      home: BudgetPage(),
+      home: ExpensesPage(),
     );
   }
 }
 
-class BudgetPage extends StatefulWidget {
-  const BudgetPage({super.key});
+class ExpensesPage extends StatefulWidget {
+  const ExpensesPage({super.key});
 
   @override
   // ignore: library_private_types_in_public_api
-  _BudgetPageState createState() => _BudgetPageState();
+  _ExpensesPageState createState() => _ExpensesPageState();
 }
 
-class _BudgetPageState extends State<BudgetPage> {
-  List<BudgetEvent> budgetEvents = [];
+class _ExpensesPageState extends State<ExpensesPage> {
+  List<ExpensesEvent> expensesEvents = [];
   double totalAmount = 0.0;
-  final _deletedEventsStack = <BudgetEvent>[];
+  final _deletedEventsStack = <ExpensesEvent>[];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Daily Budgeting'),
+        title: const Text('Daily Expenses Fee'),
       ),
       body: ListView.builder(
-        itemCount: budgetEvents.length + 1,
+        itemCount: expensesEvents.length + 1,
         itemBuilder: (context, index) {
-          if (index == budgetEvents.length) {
+          if (index == expensesEvents.length) {
             // Display the total amount at the bottom of the list
             return ListTile(
               title: const Text('Total Amount'),
-              subtitle: Text('Tsh ${totalAmount.toStringAsFixed(2)}'),
+              subtitle: Text('Tsh${totalAmount.toStringAsFixed(2)}'),
               onTap: () {
                 // Implement undo for the last deleted event (if available)
                 if (_deletedEventsStack.isNotEmpty) {
                   setState(() {
-                    BudgetEvent lastDeletedEvent = _deletedEventsStack.pop()!;
-                    budgetEvents.add(lastDeletedEvent);
+                    ExpensesEvent lastDeletedEvent = _deletedEventsStack.pop()!;
+                    expensesEvents.add(lastDeletedEvent);
                     totalAmount += lastDeletedEvent.amount;
                   });
                 }
@@ -55,13 +55,13 @@ class _BudgetPageState extends State<BudgetPage> {
             );
           }
 
-          BudgetEvent event = budgetEvents[index];
+          ExpensesEvent event = expensesEvents[index];
           return ListTile(
             title: Text(event.duty),
             subtitle: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('\$${event.amount.toStringAsFixed(2)}'),
+                Text('Tsh${event.amount.toStringAsFixed(2)}'),
                 Text('Date and Time: ${event.dateTime.toString()}'),
               ],
             ),
@@ -70,7 +70,7 @@ class _BudgetPageState extends State<BudgetPage> {
               onPressed: () {
                 setState(() {
                   _deletedEventsStack.push(event); // Store deleted event
-                  budgetEvents.removeAt(index);
+                  expensesEvents.removeAt(index);
                   totalAmount -= event.amount; // Decrease totalAmount
                 });
 
@@ -83,7 +83,7 @@ class _BudgetPageState extends State<BudgetPage> {
                       onPressed: () {
                         setState(() {
                           // Restore the deleted event
-                          budgetEvents.insert(index, event);
+                          expensesEvents.insert(index, event);
                           totalAmount += event.amount;
                         });
                         _deletedEventsStack.remove(event);
@@ -106,26 +106,26 @@ class _BudgetPageState extends State<BudgetPage> {
   }
 
   void _addNewEvent(BuildContext context) async {
-    BudgetEvent? newEvent = await showDialog(
+    ExpensesEvent? newEvent = await showDialog(
       context: context,
       builder: (context) => const AddEventDialog(),
     );
 
     if (newEvent != null) {
       setState(() {
-        budgetEvents.add(newEvent);
+        expensesEvents.add(newEvent);
         totalAmount += newEvent.amount; // Add to totalAmount
       });
     }
   }
 }
 
-class BudgetEvent {
+class ExpensesEvent {
   final String duty;
   final double amount;
   final DateTime dateTime;
 
-  BudgetEvent(this.duty, this.amount, this.dateTime);
+  ExpensesEvent(this.duty, this.amount, this.dateTime);
 }
 
 class AddEventDialog extends StatefulWidget {
@@ -177,7 +177,7 @@ class _AddEventDialogState extends State<AddEventDialog> {
               DateTime now = DateTime.now();
 
               // Create a new BudgetEvent with the current date and time
-              BudgetEvent newEvent = BudgetEvent(duty, amount, now);
+              ExpensesEvent newEvent = ExpensesEvent(duty, amount, now);
 
               // Close the dialog and pass the new event back to the BudgetPage
               Navigator.pop(context, newEvent);
