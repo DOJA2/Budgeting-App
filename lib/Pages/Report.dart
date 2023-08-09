@@ -23,7 +23,6 @@ class _ReportPageState extends State<ReportPage> {
   double budget = 1000.0; // Replace with your actual budget value
   double income = 5000.0; // Replace with your actual income value
   double expenses = 1800.0; // Replace with your actual expenses value
-
   double get savingAmount => income - expenses;
   double get spendingAmount => budget - expenses;
 
