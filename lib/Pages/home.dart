@@ -26,7 +26,7 @@ class _HomePageState extends State<HomePage> {
     BudgetPage(),
     IncomePage(),
     ExpensesApp(),
-    Report(),
+    ReportApp(),
     History(),
   ];
 

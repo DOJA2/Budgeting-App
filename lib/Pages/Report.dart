@@ -1,96 +1,135 @@
 import 'package:flutter/material.dart';
 
-class Report extends StatefulWidget {
-  const Report({super.key});
-
-  @override
-  _ReportState createState() => _ReportState();
+void main() {
+  runApp(ReportApp());
 }
 
-class _ReportState extends State<Report> {
-  List day = ['Income', 'Expenses'];
-  int index_color = 0;
+class ReportApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      home: ReportPage(),
+    );
+  }
+}
+
+class ReportPage extends StatefulWidget {
+  @override
+  _ReportPageState createState() => _ReportPageState();
+}
+
+class _ReportPageState extends State<ReportPage> {
+  double budget = 1000.0; // Replace with your actual budget value
+  double income = 5000.0; // Replace with your actual income value
+  double expenses = 1800.0; // Replace with your actual expenses value
+
+  double get savingAmount => income - expenses;
+  double get spendingAmount => budget - expenses;
+
+  Color getSavingColor() {
+    if (savingAmount > 0) {
+      return Colors.green;
+    } else if (savingAmount < 0) {
+      return Colors.red;
+    } else {
+      return Colors.blue;
+    }
+  }
+
+  Color getSpendingColor() {
+    if (spendingAmount > 0) {
+      return Colors.green;
+    } else if (spendingAmount < 0) {
+      return Colors.red;
+    } else {
+      return Colors.blue;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Daily Report'),
+        title: Text('Daily Report'),
       ),
-      body: SafeArea(
-        child: CustomScrollView(slivers: [
-          SliverToBoxAdapter(
-            child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Column(
-                children: [
-                  SizedBox(height: 16),
-                  Text(
-                    'Budget',
-                    style: TextStyle(
-                      fontWeight: FontWeight.w800,
-                      fontSize: 18,
-                    ),
-                  ),
-                  Text(
-                    'Tsh2000',
-                    style: TextStyle(
-                      fontSize: 18,
-                      color: Colors.black,
-                      fontWeight: FontWeight.w800,
-                    ),
-                  ),
-                  SizedBox(height: 18),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 10),
-                    child: Row(
-                      // mainAxisAlignment: MainAxisAlignment.center,
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        ...List.generate(2, (index) {
-                          return GestureDetector(
-                            onTap: () {
-                              setState(() {index_color = index;
-                              }
-                              );
-                            },
-                            
-                            child: Container(
-                              height: 40,
-                              width: 140,
-                              decoration: BoxDecoration(
-                                boxShadow: [BoxShadow(
-                                  color: Colors.black,
-                                  blurRadius: 2,
-                                )],
-                                
-                                borderRadius: BorderRadius.circular(10),
-                                color: index_color == index?
-                                 Colors.blue:
-                                 Colors.white,
-                              ),
-                              alignment: Alignment.center,
-                              child: Text(
-                                day[index],
-                                style: TextStyle(
-                                  fontSize: 15,
-                                  color: index_color == index?
-                                 Colors.white:
-                                 Colors.black,
-                                  fontWeight: FontWeight.w800,
-                                ),
-                              ),
-                            ),
-                          );
-                        })
-                      ],
-                    ),
-                  ),
-                ],
-              ),
+      body: Padding(
+        padding: const EdgeInsets.all(20.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            _buildHeader(),
+            SizedBox(height: 20),
+            _buildAmountRow('Budget', budget),
+            _buildAmountRow('Income', income),
+            _buildAmountRow('Expenses', expenses),
+            SizedBox(height: 20),
+            _buildResultRow('Saving Amount', savingAmount, getSavingColor()),
+            SizedBox(height: 20),
+            _buildResultRow('Spending Amount', spendingAmount, getSpendingColor()),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildHeader() {
+    return Text(
+      'REPORT',
+      style: TextStyle(
+        fontSize: 24,
+        fontWeight: FontWeight.bold,
+      ),
+      textAlign: TextAlign.center,
+    );
+  }
+
+  Widget _buildAmountRow(String label, double amount) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8.0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(
+            label,
+            style: TextStyle(
+              fontSize: 18,
             ),
-          )
-        ]),
+          ),
+          Text(
+            'Tsh ${amount.toStringAsFixed(2)}',
+            style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildResultRow(String label, double amount, Color color) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8.0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(
+            label,
+            style: TextStyle(
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          Text(
+            'Tsh ${amount.toStringAsFixed(2)}',
+            style: TextStyle(
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+              color: color,
+            ),
+          ),
+        ],
       ),
     );
   }
