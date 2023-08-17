@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:saving_money/Pages/Report.dart';
-import 'package:saving_money/Pages/bugdet.dart';
+import 'package:saving_money/Pages/budget.dart';
+//import 'package:saving_money/Pages/bugdet.dart';
 import 'package:saving_money/Pages/history.dart';
 import 'package:saving_money/Pages/income.dart';
+
+
 
 import 'expenses.dart';
 
@@ -23,11 +26,11 @@ class _HomePageState extends State<HomePage> {
   }
 
   final List<Widget> _pages = [
-    BudgetPage(),
-    IncomePage(),
-    ExpensesApp(),
-    ReportApp(),
-    History(),
+     BudgetPage(),
+    const IncomePage(),
+      ExpensesPage(),
+     const ReportPage(),
+    const History(),
   ];
 
   @override
@@ -38,7 +41,7 @@ class _HomePageState extends State<HomePage> {
           currentIndex: _selectedIndex,
           onTap: _navigateBottomBar,
           type: BottomNavigationBarType.fixed,
-          items: [
+          items: const [
             BottomNavigationBarItem(icon: Icon(Icons.money), label: 'Budget'),
             BottomNavigationBarItem(
                 icon: Icon(Icons.account_balance_wallet), label: 'Income'),

@@ -3,13 +3,15 @@ import 'package:flutter/material.dart';
 import 'login.dart';
 
 void main() {
-  runApp(MyReg());
+  runApp(const MyReg());
 }
 
 class MyReg extends StatelessWidget {
+  const MyReg({super.key});
+
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return const MaterialApp(
       debugShowCheckedModeBanner: false,
       home: RegistrationPage(),
     );
@@ -17,6 +19,8 @@ class MyReg extends StatelessWidget {
 }
 
 class RegistrationPage extends StatelessWidget {
+  const RegistrationPage({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -24,39 +28,39 @@ class RegistrationPage extends StatelessWidget {
         child: SingleChildScrollView(
           child: Center(
             child: Padding(
-              padding: EdgeInsets.all(16.0),
+              padding: const EdgeInsets.all(16.0),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text(
+                  const Text(
                 'Registration',
                 style: TextStyle(
                   fontSize: 32, // Adjust the font size as needed
                   fontWeight: FontWeight.bold,
                 ),
               ),
-              SizedBox(height: 16.0),
+              const SizedBox(height: 16.0),
                   _buildTextField('Full Name', Icons.person),
-                  SizedBox(height: 16.0),
+                  const SizedBox(height: 16.0),
                   _buildTextField('Email', Icons.email,
                       inputType: TextInputType.emailAddress),
-                  SizedBox(height: 16.0),
+                  const SizedBox(height: 16.0),
                   _buildTextField('Phone Number', Icons.phone,
                       inputType: TextInputType.phone),
-                  SizedBox(height: 16.0),
+                  const SizedBox(height: 16.0),
                   _buildTextField('Password', Icons.lock, isPassword: true),
-                  SizedBox(height: 16.0),
+                  const SizedBox(height: 16.0),
                   _buildTextField('Confirm Password', Icons.lock, isPassword: true),
-                  SizedBox(height: 16.0),
+                  const SizedBox(height: 16.0),
                   ElevatedButton(
                     onPressed: () {
                       Navigator.push(context,
-                          MaterialPageRoute(builder: (context) => MyLogin()
+                          MaterialPageRoute(builder: (context) => const MyLogin()
                           ),
                           );
                       // Add registration logic here
                     },
-                    child: Text('Register'),
+                    child: const Text('Register'),
                   ),
                 ],
               ),
@@ -82,7 +86,7 @@ class RegistrationPage extends StatelessWidget {
         keyboardType: inputType,
         decoration: InputDecoration(
           hintText: hintText,
-          contentPadding: EdgeInsets.all(12.0),
+          contentPadding: const EdgeInsets.all(12.0),
           prefixIcon: Icon(iconData),
           border: InputBorder.none,
         ),

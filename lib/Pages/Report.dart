@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
 
 void main() {
-  runApp(ReportApp());
+  runApp(const ReportApp());
 }
 
 class ReportApp extends StatelessWidget {
+  const ReportApp({super.key});
+
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return const MaterialApp(
       debugShowCheckedModeBanner: false,
       home: ReportPage(),
     );
@@ -15,6 +17,8 @@ class ReportApp extends StatelessWidget {
 }
 
 class ReportPage extends StatefulWidget {
+  const ReportPage({super.key});
+
   @override
   _ReportPageState createState() => _ReportPageState();
 }
@@ -50,7 +54,7 @@ class _ReportPageState extends State<ReportPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Daily Report'),
+        title: const Text('Daily Report'),
       ),
       body: Padding(
         padding: const EdgeInsets.all(20.0),
@@ -58,13 +62,13 @@ class _ReportPageState extends State<ReportPage> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             _buildHeader(),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             _buildAmountRow('Budget', budget),
             _buildAmountRow('Income', income),
             _buildAmountRow('Expenses', expenses),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             _buildResultRow('Saving Amount', savingAmount, getSavingColor()),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             _buildResultRow('Spending Amount', spendingAmount, getSpendingColor()),
           ],
         ),
@@ -73,7 +77,7 @@ class _ReportPageState extends State<ReportPage> {
   }
 
   Widget _buildHeader() {
-    return Text(
+    return const Text(
       'REPORT',
       style: TextStyle(
         fontSize: 24,
@@ -91,13 +95,13 @@ class _ReportPageState extends State<ReportPage> {
         children: [
           Text(
             label,
-            style: TextStyle(
+            style: const TextStyle(
               fontSize: 18,
             ),
           ),
           Text(
             'Tsh ${amount.toStringAsFixed(2)}',
-            style: TextStyle(
+            style: const TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.bold,
             ),
@@ -115,7 +119,7 @@ class _ReportPageState extends State<ReportPage> {
         children: [
           Text(
             label,
-            style: TextStyle(
+            style: const TextStyle(
               fontSize: 20,
               fontWeight: FontWeight.bold,
             ),
@@ -133,3 +137,5 @@ class _ReportPageState extends State<ReportPage> {
     );
   }
 }
+
+ 

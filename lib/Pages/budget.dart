@@ -1,30 +1,37 @@
 import 'package:flutter/material.dart';
+import '../database/budgetsql.dart';
 import 'dart:async';
-import '../database/incomesql.dart';
 //import 'package:path_provider/path_provider.dart';
 //import 'package:sqflite/sqflite.dart';
 //import 'dart:io';
 //import 'database_helper.dart';
 
-class IncomePage extends StatefulWidget {
-  const IncomePage({super.key});
+class BudgetPage extends StatefulWidget {
+  BudgetPage({super.key});
+   // Budget items list
+  //final List<Map<String, dynamic>> budgetItems = [];
 
   @override
-  _IncomePageState createState() => _IncomePageState();
+  _BudgetPageState createState() => _BudgetPageState();
+
+
 }
 
-class _IncomePageState extends State<IncomePage> {
+class _BudgetPageState extends State<BudgetPage> {
   List<Map<String, dynamic>> _items = [];
+
+  
 
   @override
   void initState() {
     super.initState();
     _loadItems();
+    
   }
 
   Future<void> _loadItems() async {
     final db = await SQLHelper.db();
-    final items = await db.query('income', orderBy: 'createdAt DESC');
+    final items = await db.query('budget', orderBy: 'createdAt DESC');
     setState(() {
       _items = items;
     });
@@ -40,7 +47,7 @@ class _IncomePageState extends State<IncomePage> {
     await _loadItems();
   }
 
-  double _getTotalAmount() {
+  double _getTotalAmountBudget() {
     double total = 0;
     for (final item in _items) {
       total += item['amount'];
@@ -52,7 +59,7 @@ class _IncomePageState extends State<IncomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Income Page'),
+        title: const Text('Budget Page'),
       ),
       body: ListView.builder(
         itemCount: _items.length,
@@ -83,7 +90,8 @@ class _IncomePageState extends State<IncomePage> {
                   children: [
                     TextFormField(
                       decoration: const InputDecoration(
-                        labelText: 'Duty'),
+                        labelText: 'Duty'
+                        ),
                       onChanged: (value) => duty = value,
                     ),
                     SizedBox(height: 10),
@@ -118,7 +126,7 @@ class _IncomePageState extends State<IncomePage> {
           height: 50,
           child: Center(
             child: Text(
-              'Total Amount: Tsh ${_getTotalAmount()}',
+              'Total Amount: Tsh ${_getTotalAmountBudget()}',
               style: const TextStyle(fontSize: 20),
             ),
           ),

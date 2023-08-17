@@ -4,13 +4,15 @@ import 'home.dart';
 import 'registration.dart';
 
 void main() {
-  runApp(MyLogin());
+  runApp(const MyLogin());
 }
 
 class MyLogin extends StatelessWidget {
+  const MyLogin({super.key});
+
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return const MaterialApp(
       debugShowCheckedModeBanner: false,
       home: LoginPage(),
     );
@@ -18,46 +20,48 @@ class MyLogin extends StatelessWidget {
 }
 
 class LoginPage extends StatelessWidget {
+  const LoginPage({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Center(
         child: Padding(
-          padding: EdgeInsets.all(16.0),
+          padding: const EdgeInsets.all(16.0),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Text(
+              const Text(
                 'Login',
                 style: TextStyle(
                   fontSize: 32, // Adjust the font size as needed
                   fontWeight: FontWeight.bold,
                 ),
               ),
-              SizedBox(height: 16.0),
+              const SizedBox(height: 16.0),
               _buildTextField('Phone Number', Icons.phone, inputType: TextInputType.phone),
-              SizedBox(height: 16.0),
+              const SizedBox(height: 16.0),
               _buildTextField('Password', Icons.lock, isPassword: true),
-              SizedBox(height: 16.0),
+              const SizedBox(height: 16.0),
               ElevatedButton(
                 onPressed: () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => HomePage()),
+                    MaterialPageRoute(builder: (context) => const HomePage()),
                   );
                   // Add login logic here
                 },
-                child: Text('Login'),
+                child: const Text('Login'),
               ),
-              SizedBox(height: 8.0),
+              const SizedBox(height: 8.0),
               TextButton(
                 onPressed: () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => MyReg()),
+                    MaterialPageRoute(builder: (context) => const MyReg()),
                   );
                 },
-                child: Text('Create an account'),
+                child: const Text('Create an account'),
               ),
             ],
           ),
@@ -81,7 +85,7 @@ class LoginPage extends StatelessWidget {
         keyboardType: inputType,
         decoration: InputDecoration(
           hintText: hintText,
-          contentPadding: EdgeInsets.all(12.0),
+          contentPadding: const EdgeInsets.all(12.0),
           prefixIcon: Icon(iconData),
           border: InputBorder.none,
         ),

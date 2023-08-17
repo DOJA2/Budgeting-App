@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 
 class History extends StatelessWidget {
+  const History({super.key});
+
   @override
   Widget build(BuildContext context) {
-    return Center(
+    return const Center(
       child: Text('History',
       style: TextStyle(fontSize: 50),
       ),

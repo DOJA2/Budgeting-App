@@ -5,7 +5,7 @@ import 'package:saving_money/main.dart';
 void main() {
   testWidgets('Test if buttons are displayed', (WidgetTester tester) async {
     // Build our app and trigger a frame.
-    await tester.pumpWidget(MyApp());
+    await tester.pumpWidget(const MyApp());
 
     // Verify if the buttons are displayed on the screen.
     expect(find.text('Budget'), findsOneWidget);
@@ -17,7 +17,7 @@ void main() {
 
  testWidgets('Test navigation to BudgetPage', (WidgetTester tester) async {
     // Build our app and trigger a frame.
-    await tester.pumpWidget(MyApp());
+    await tester.pumpWidget(const MyApp());
 
     // Tap the 'Budget' button and trigger navigation.
     await tester.tap(find.text('Budget'));
