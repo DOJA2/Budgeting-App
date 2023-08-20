@@ -29,7 +29,7 @@ class _HomePageState extends State<HomePage> {
      BudgetPage(),
     const IncomePage(),
       ExpensesPage(),
-     const ReportPage(),
+      ReportPage(),
     const History(),
   ];
 

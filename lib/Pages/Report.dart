@@ -1,34 +1,23 @@
 import 'package:flutter/material.dart';
-
-void main() {
-  runApp(const ReportApp());
-}
-
-class ReportApp extends StatelessWidget {
-  const ReportApp({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return const MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: ReportPage(),
-    );
-  }
-}
+import 'package:saving_money/database/budgetsql.dart';
+import 'package:path/path.dart' as path; // Import for join function
+import 'package:sqflite/sqflite.dart' as sql;
+import 'package:saving_money/database/incomesql.dart' as Income;
 
 class ReportPage extends StatefulWidget {
-  const ReportPage({super.key});
-
   @override
   _ReportPageState createState() => _ReportPageState();
 }
 
 class _ReportPageState extends State<ReportPage> {
+  double totalBudget = 0.0;
+  double totalIncome = 0.0;
+  double totalExpenses = 0.0;
   double budget = 1000.0; // Replace with your actual budget value
   double income = 5000.0; // Replace with your actual income value
   double expenses = 1800.0; // Replace with your actual expenses value
-  double get savingAmount => income - expenses;
-  double get spendingAmount => budget - expenses;
+  double get savingAmount => totalIncome - expenses;
+  double get spendingAmount => totalBudget - expenses;
 
   Color getSavingColor() {
     if (savingAmount > 0) {
@@ -51,10 +40,46 @@ class _ReportPageState extends State<ReportPage> {
   }
 
   @override
+  void initState() {
+    super.initState();
+    _fetchTotalBudget();
+    _fetchTotalIncome();
+    // _fetchTotalExpenses();
+  }
+
+  Future<void> _fetchTotalBudget() async {
+    try {
+      final dbPath = await sql.getDatabasesPath();
+      final db = await sql.openDatabase(path.join(dbPath, 'dbmoney.db'));
+      final totalBudget = await SQLHelper.getTotalAmountBudget();
+      setState(() {
+        this.totalBudget = totalBudget;
+      });
+    } catch (error) {
+      // Handle error
+      print("Error fetching total budget: $error");
+    }
+  }
+
+  Future<void> _fetchTotalIncome() async {
+    try {
+      final dbPath = await sql.getDatabasesPath();
+      final db = await sql.openDatabase(path.join(dbPath, 'dbincome.db'));
+      final totalIncome = await Income.SQLHelper.getTotalAmount();
+      setState(() {
+        this.totalIncome = totalIncome;
+      });
+    } catch (error) {
+      // Handle error
+      print("Error fetching total income: $error");
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Daily Report'),
+        title: Text('Daily Report'),
       ),
       body: Padding(
         padding: const EdgeInsets.all(20.0),
@@ -62,14 +87,15 @@ class _ReportPageState extends State<ReportPage> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             _buildHeader(),
-            const SizedBox(height: 20),
-            _buildAmountRow('Budget', budget),
-            _buildAmountRow('Income', income),
+            SizedBox(height: 20),
+            _buildAmountRow('Budget', totalBudget),
+            _buildAmountRow('Income', totalIncome),
             _buildAmountRow('Expenses', expenses),
-            const SizedBox(height: 20),
+            SizedBox(height: 20),
             _buildResultRow('Saving Amount', savingAmount, getSavingColor()),
-            const SizedBox(height: 20),
-            _buildResultRow('Spending Amount', spendingAmount, getSpendingColor()),
+            SizedBox(height: 20),
+            _buildResultRow(
+                'Spending Amount', spendingAmount, getSpendingColor()),
           ],
         ),
       ),
@@ -77,7 +103,7 @@ class _ReportPageState extends State<ReportPage> {
   }
 
   Widget _buildHeader() {
-    return const Text(
+    return Text(
       'REPORT',
       style: TextStyle(
         fontSize: 24,
@@ -95,13 +121,13 @@ class _ReportPageState extends State<ReportPage> {
         children: [
           Text(
             label,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 18,
             ),
           ),
           Text(
             'Tsh ${amount.toStringAsFixed(2)}',
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.bold,
             ),
@@ -119,7 +145,7 @@ class _ReportPageState extends State<ReportPage> {
         children: [
           Text(
             label,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 20,
               fontWeight: FontWeight.bold,
             ),
@@ -137,5 +163,3 @@ class _ReportPageState extends State<ReportPage> {
     );
   }
 }
-
- 

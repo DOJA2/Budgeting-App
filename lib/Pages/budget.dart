@@ -7,26 +7,17 @@ import 'dart:async';
 //import 'database_helper.dart';
 
 class BudgetPage extends StatefulWidget {
-  BudgetPage({super.key});
-   // Budget items list
-  //final List<Map<String, dynamic>> budgetItems = [];
-
   @override
   _BudgetPageState createState() => _BudgetPageState();
-
-
 }
 
 class _BudgetPageState extends State<BudgetPage> {
   List<Map<String, dynamic>> _items = [];
 
-  
-
   @override
   void initState() {
     super.initState();
     _loadItems();
-    
   }
 
   Future<void> _loadItems() async {
@@ -47,7 +38,7 @@ class _BudgetPageState extends State<BudgetPage> {
     await _loadItems();
   }
 
-  double _getTotalAmountBudget() {
+  double _getTotalAmount() {
     double total = 0;
     for (final item in _items) {
       total += item['amount'];
@@ -59,7 +50,7 @@ class _BudgetPageState extends State<BudgetPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Budget Page'),
+        title: Text('Budget Page'),
       ),
       body: ListView.builder(
         itemCount: _items.length,
@@ -69,14 +60,14 @@ class _BudgetPageState extends State<BudgetPage> {
             title: Text(item['duty']),
             subtitle: Text('Tsh ${item['amount']}'),
             trailing: IconButton(
-              icon: const Icon(Icons.delete),
+              icon: Icon(Icons.delete),
               onPressed: () => _deleteItem(item['id']),
             ),
           );
         },
       ),
       floatingActionButton: FloatingActionButton(
-        child: const Icon(Icons.add),
+        child: Icon(Icons.add),
         onPressed: () {
           showDialog(
             context: context,
@@ -84,20 +75,16 @@ class _BudgetPageState extends State<BudgetPage> {
               String duty = '';
               double amount = 0.0;
               return AlertDialog(
-                title: const Text('Add Event'),
+                title: Text('Add Event'),
                 content: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    TextFormField(
-                      decoration: const InputDecoration(
-                        labelText: 'Duty'
-                        ),
+                    TextField(
+                      decoration: InputDecoration(hintText: 'Duty'),
                       onChanged: (value) => duty = value,
                     ),
-                    SizedBox(height: 10),
-                    TextFormField(
-                      decoration: const InputDecoration(
-                        labelText: 'Amount'),
+                    TextField(
+                      decoration: InputDecoration(hintText: 'Amount'),
                       keyboardType: TextInputType.number,
                       onChanged: (value) => amount = double.parse(value),
                     ),
@@ -105,11 +92,11 @@ class _BudgetPageState extends State<BudgetPage> {
                 ),
                 actions: [
                   TextButton(
-                    child: const Text('Cancel'),
+                    child: Text('Cancel'),
                     onPressed: () => Navigator.of(context).pop(),
                   ),
                   TextButton(
-                    child: const Text('Save'),
+                    child: Text('Save'),
                     onPressed: () async {
                       await _addItem(duty, amount);
                       Navigator.of(context).pop();
@@ -122,12 +109,12 @@ class _BudgetPageState extends State<BudgetPage> {
         },
       ),
       bottomNavigationBar: BottomAppBar(
-        child: SizedBox(
+        child: Container(
           height: 50,
           child: Center(
             child: Text(
-              'Total Amount: Tsh ${_getTotalAmountBudget()}',
-              style: const TextStyle(fontSize: 20),
+              'Total Amount: Tsh ${_getTotalAmount()}',
+              style: TextStyle(fontSize: 20),
             ),
           ),
         ),

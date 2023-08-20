@@ -17,9 +17,20 @@ class _ExpensesPageState extends State<ExpensesPage> {
       body: ListView.builder(
         itemCount: _expenses.length,
         itemBuilder: (context, index) {
-          return ListTile(
-            title: Text(_expenses[index]['category']),
-            subtitle: Text('${_expenses[index]['duty']} - Tsh ${_expenses[index]['amount']}'),
+          String category = _expenses[index]['category'];
+          List<Map<String, dynamic>> categoryExpenses = _expenses.where((expense) => expense['category'] == category).toList();
+
+          return ExpansionTile(
+            title: Text(category),
+            children: categoryExpenses.map<Widget>((expense) {
+              String duty = expense['duty'];
+              double amount = expense['amount'];
+
+              return ListTile(
+                title: Text(duty),
+                subtitle: Text('Amount: $amount'),
+              );
+            }).toList(),
           );
         },
       ),
@@ -39,6 +50,7 @@ class _ExpensesPageState extends State<ExpensesPage> {
                   children: [
                     DropdownButton<String>(
                       value: _category,
+                      
                       onChanged: (value) {
                         setState(() {
                           _category = value!;

@@ -63,9 +63,9 @@ class SQLHelper {
     }
   }
 
-  static Future<double> getTotalAmount() async {
+  static Future<double> getTotalAmountBudget() async {
     final db = await SQLHelper.db();
     final result = await db.rawQuery('SELECT SUM(amount) FROM budget');
-    return (result.first['SUM(amount)'] ?? 0)as double;
-  }
+    return (result.first['SUM(amount)'] ?? 0) as double;
+  } 
 }

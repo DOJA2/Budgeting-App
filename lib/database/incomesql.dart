@@ -69,6 +69,6 @@ class SQLHelper {
   static Future<double> getTotalAmount() async {
     final db = await SQLHelper.db();
     final result = await db.rawQuery('SELECT SUM(amount) FROM income');
-    return (result.first['SUM(amount)'] ?? 0) as double;
+    return double.parse((result.first['SUM(amount)'] ?? 0).toString());
   }
 }
