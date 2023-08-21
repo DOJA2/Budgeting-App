@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+// import 'package:saving_money/database/budgetsql.dart';
+// import 'package:path/path.dart' as path;
+// import 'package:sqflite/sqflite.dart' as sql;
 
 class ExpensesPage extends StatefulWidget {
   @override
@@ -7,6 +10,28 @@ class ExpensesPage extends StatefulWidget {
 
 class _ExpensesPageState extends State<ExpensesPage> {
   List<Map<String, dynamic>> _expenses = [];
+  // List<String> duties = [];
+  // String selectedDuty;
+
+   @override
+  void initState() {
+    super.initState();
+    //_fetchDuties();
+  }
+
+  // Future<void> _fetchDuties() async {
+  //   try {
+  //     final dbPath = await sql.getDatabasesPath();
+  //     final db = await sql.openDatabase(path.join(dbPath, 'dbmoney.db'));
+  //     final items = await SQLHelper.getItems();
+  //     final List duties = items.map((item) => item['duty']).toList();
+  //     setState(() {
+  //       this.duties = duties;
+  //     });
+  //   } catch (error) {
+  //     print("Error fetching duties: $error");
+  //   }
+  // }
 
   @override
   Widget build(BuildContext context) {
