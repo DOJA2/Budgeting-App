@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-// import 'package:saving_money/database/budgetsql.dart';
-// import 'package:path/path.dart' as path;
-// import 'package:sqflite/sqflite.dart' as sql;
+//import 'package:sqflite/sqflite.dart' as sql;
+
+import '../database/budgetsql.dart';
 
 class ExpensesPage extends StatefulWidget {
   @override
@@ -9,139 +9,114 @@ class ExpensesPage extends StatefulWidget {
 }
 
 class _ExpensesPageState extends State<ExpensesPage> {
-  List<Map<String, dynamic>> _expenses = [];
-  // List<String> duties = [];
-  // String selectedDuty;
+  List<Map<String, dynamic>> items = []; // List to store fetched items
 
-   @override
+  @override
   void initState() {
     super.initState();
-    //_fetchDuties();
+    fetchItems();
   }
 
-  // Future<void> _fetchDuties() async {
-  //   try {
-  //     final dbPath = await sql.getDatabasesPath();
-  //     final db = await sql.openDatabase(path.join(dbPath, 'dbmoney.db'));
-  //     final items = await SQLHelper.getItems();
-  //     final List duties = items.map((item) => item['duty']).toList();
-  //     setState(() {
-  //       this.duties = duties;
-  //     });
-  //   } catch (error) {
-  //     print("Error fetching duties: $error");
-  //   }
-  // }
+  Future<void> fetchItems() async {
+    final itemList = await SQLHelper.getItems();
+    setState(() {
+      items = itemList;
+    });
+  }
+   Future<List<String>> fetchDutyNames() async {
+    final itemList = await SQLHelper.getItems();
+    return itemList.map<String>((item) => item['duty']).toList();
+  }
+
+Future<void> _showAddExpenseDialog() async {
+    String selectedDuty = '';
+
+    await showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: Text('Add Expense'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            FutureBuilder<List<String>>(
+              future: fetchDutyNames(),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return CircularProgressIndicator();
+                } else if (snapshot.hasError) {
+                  return Text('Error: ${snapshot.error}');
+                } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                  return Text('No duties available.');
+                } else {
+                  return DropdownButton<String>(
+                    value: selectedDuty,
+                    onChanged: (value) {
+                      setState(() {
+                        selectedDuty = value!;
+                      });
+                    },
+                    items: snapshot.data!.map<DropdownMenuItem<String>>(
+                      (duty) {
+                        return DropdownMenuItem<String>(
+                          value: duty,
+                          child: Text(duty),
+                        );
+                      },
+                    ).toList(),
+                  );
+                }
+              },
+            ),
+            // You can add more content here, like amount text field
+          ],
+        ),
+        actions: [
+          ElevatedButton(
+            onPressed: () {
+              // Call your SQLHelper function here to insert the new item
+              // SQLHelper.createItem(selectedDuty, newAmount);
+              fetchItems(); // Update the list
+              Navigator.of(context).pop(); // Close the AlertDialog
+            },
+            child: Text('Add'),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              Navigator.of(context).pop(); // Close the AlertDialog
+            },
+            child: Text('Cancel'),
+          ),
+        ],
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Expenses'),
+        title: Text('Expenses Page'),
       ),
       body: ListView.builder(
-        itemCount: _expenses.length,
-        itemBuilder: (context, index) {
-          String category = _expenses[index]['category'];
-          List<Map<String, dynamic>> categoryExpenses = _expenses.where((expense) => expense['category'] == category).toList();
-
-          return ExpansionTile(
-            title: Text(category),
-            children: categoryExpenses.map<Widget>((expense) {
-              String duty = expense['duty'];
-              double amount = expense['amount'];
-
-              return ListTile(
-                title: Text(duty),
-                subtitle: Text('Amount: $amount'),
-              );
-            }).toList(),
+        itemCount: items.length,
+        itemBuilder: (ctx, index) {
+          final item = items[index];
+          return ListTile(
+            title: Text(item['duty']),
+            subtitle: Text('Amount: ${item['amount']}'),
           );
         },
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          showDialog(
-            context: context,
-            builder: (context) {
-              String _category = 'Food';
-              String _duty = '';
-              double _amount = 0.0;
-
-              return AlertDialog(
-                title: Text('Add Expense'),
-                content: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    DropdownButton<String>(
-                      value: _category,
-                      
-                      onChanged: (value) {
-                        setState(() {
-                          _category = value!;
-                        });
-                      },
-                      items: <String>['Food', 'Transport', 'Entertainment', 'Shopping']
-                          .map<DropdownMenuItem<String>>((String value) {
-                        return DropdownMenuItem<String>(
-                          value: value,
-                          child: Text(value),
-                        );
-                      }).toList(),
-                    ),
-                    SizedBox(height: 10),
-                    TextField(
-                      decoration: InputDecoration(
-                        labelText: 'Duty', 
-                        border: OutlineInputBorder()),
-                      onChanged: (value) {
-                        setState(() {
-                          _duty = value;
-                        });
-                      },
-                    ),
-                    SizedBox(height: 10),
-                    TextFormField(
-                      decoration: InputDecoration(
-                        labelText: 'Amount',  
-                        border: OutlineInputBorder(
-                        )),
-                      keyboardType: TextInputType.number,
-                      onChanged: (value) {
-                        setState(() {
-                          _amount = double.parse(value);
-                        });
-                      },
-                    ),
-                  ],
-                ),
-                actions: [
-                  TextButton(
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                    },
-                    child: Text('Cancel'),
-                  ),
-                  TextButton(
-                    onPressed: () {
-                      setState(() {
-                        _expenses.add({
-                          'category': _category,
-                          'duty': _duty,
-                          'amount': _amount,
-                        });
-                      });
-                      Navigator.of(context).pop();
-                    },
-                    child: Text('Add'),
-                  ),
-                ],
-              );
-            },
-          );
-        },
+        onPressed: _showAddExpenseDialog,
         child: Icon(Icons.add),
       ),
     );
   }
 }
+
+// void main() {
+//   runApp(MaterialApp(
+//     home: ExpensesPage(),
+//   ));
+// }
