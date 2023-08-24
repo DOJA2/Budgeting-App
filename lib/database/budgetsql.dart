@@ -68,4 +68,10 @@ class SQLHelper {
     final result = await db.rawQuery('SELECT SUM(amount) FROM budget');
     return double.parse((result.first['SUM(amount)'] ?? 0) .toString());
   } 
+
+  static Future<List<String>> getDutyNames() async {
+    final db = await SQLHelper.db();
+    final result = await db.query('budget', distinct: true, columns: ['duty']);
+    return result.map((row) => row['duty'] as String).toList();
+  }
 }
