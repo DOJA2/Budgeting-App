@@ -4,6 +4,8 @@ import 'package:path/path.dart' as path; // Import for join function
 import 'package:sqflite/sqflite.dart' as sql;
 import 'package:saving_money/database/incomesql.dart' as Income;
 
+import '../database/expensessql.dart';
+
 class ReportPage extends StatefulWidget {
   @override
   _ReportPageState createState() => _ReportPageState();
@@ -13,11 +15,11 @@ class _ReportPageState extends State<ReportPage> {
   double totalBudget = 0.0;
   double totalIncome = 0.0;
   double totalExpenses = 0.0;
-  double budget = 1000.0; // Replace with your actual budget value
-  double income = 5000.0; // Replace with your actual income value
-  double expenses = 1800.0; // Replace with your actual expenses value
-  double get savingAmount => totalIncome - expenses;
-  double get spendingAmount => totalBudget - expenses;
+  // double budget = 1000.0; // Replace with your actual budget value
+  // double income = 5000.0; // Replace with your actual income value
+  // double expenses = 1800.0; // Replace with your actual expenses value
+  double get savingAmount => totalIncome - totalExpenses;
+  double get spendingAmount => totalBudget - totalExpenses;
 
   Color getSavingColor() {
     if (savingAmount > 0) {
@@ -44,7 +46,7 @@ class _ReportPageState extends State<ReportPage> {
     super.initState();
     _fetchTotalBudget();
     _fetchTotalIncome();
-    // _fetchTotalExpenses();
+    _fetchTotalExpenses();
   }
 
   Future<void> _fetchTotalBudget() async {
@@ -72,6 +74,20 @@ class _ReportPageState extends State<ReportPage> {
     } catch (error) {
       // Handle error
       print("Error fetching total income: $error");
+    }
+  }
+
+  Future<void> _fetchTotalExpenses() async {
+    try {
+      final dbPath = await sql.getDatabasesPath();
+      final db = await sql.openDatabase(path.join(dbPath, 'expense.db'));
+      final totalExpenses = await Expensehelper.getTotalAmountExpense();
+      setState(() {
+        this.totalExpenses = totalExpenses;
+      });
+    } catch (error) {
+      // Handle error
+      print("Error fetching total expenses: $error");
     }
   }
 
@@ -143,7 +159,7 @@ class _ReportPageState extends State<ReportPage> {
         children: [
           _buildAmountRow('Budget', totalBudget),
           _buildAmountRow('Income', totalIncome),
-          _buildAmountRow('Expenses', expenses),
+          _buildAmountRow('Expenses', totalExpenses),
         ],
       ),
     );

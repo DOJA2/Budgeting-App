@@ -80,11 +80,11 @@ class _BudgetPageState extends State<BudgetPage> {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     TextField(
-                      decoration: InputDecoration(hintText: 'Duty'),
+                      decoration: InputDecoration(hintText: 'Budget Name'),
                       onChanged: (value) => duty = value,
                     ),
                     TextField(
-                      decoration: InputDecoration(hintText: 'Amount'),
+                      decoration: InputDecoration(hintText: 'Budget Amount'),
                       keyboardType: TextInputType.number,
                       onChanged: (value) => amount = double.parse(value),
                     ),

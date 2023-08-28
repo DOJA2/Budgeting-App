@@ -83,13 +83,13 @@ class _IncomePageState extends State<IncomePage> {
                   children: [
                     TextFormField(
                       decoration: const InputDecoration(
-                        labelText: 'Duty'),
+                        labelText: 'Income Name'),
                       onChanged: (value) => duty = value,
                     ),
                     SizedBox(height: 10),
                     TextFormField(
                       decoration: const InputDecoration(
-                        labelText: 'Amount'),
+                        labelText: 'Income Amount'),
                       keyboardType: TextInputType.number,
                       onChanged: (value) => amount = double.parse(value),
                     ),
