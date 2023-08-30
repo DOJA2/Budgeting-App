@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import '../database/budgetsql.dart';
 import 'dart:async';
 //import 'package:path_provider/path_provider.dart';
@@ -13,11 +14,18 @@ class BudgetPage extends StatefulWidget {
 
 class _BudgetPageState extends State<BudgetPage> {
   List<Map<String, dynamic>> _items = [];
+  String formattedDateTime = '';  // This will hold the formatted date and time
 
   @override
   void initState() {
     super.initState();
     _loadItems();
+    updateDateTime();
+  }
+
+   void updateDateTime() {
+    final now = DateTime.now();
+    formattedDateTime = DateFormat('EEE, MMM dd yyyy').format(now);
   }
 
   Future<void> _loadItems() async {
@@ -50,7 +58,14 @@ class _BudgetPageState extends State<BudgetPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Budget Page'),
+        automaticallyImplyLeading: false,
+         title: Row(
+          children: [
+            Text('Budget Page'),
+            Spacer(), // Takes up space in between
+            Text(formattedDateTime),
+          ],
+        ),
       ),
       body: ListView.builder(
         itemCount: _items.length,
@@ -79,12 +94,13 @@ class _BudgetPageState extends State<BudgetPage> {
                 content: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    TextField(
-                      decoration: InputDecoration(hintText: 'Duty'),
-                      onChanged: (value) => duty = value,
-                    ),
-                    TextField(
-                      decoration: InputDecoration(hintText: 'Amount'),
+                    TextFormField(
+  decoration: InputDecoration(hintText: 'Budget Name'),
+  onChanged: (value) => duty = value,
+),
+                    SizedBox(height: 10),
+                    TextFormField(
+                      decoration: InputDecoration(hintText: 'Budget Amount'),
                       keyboardType: TextInputType.number,
                       onChanged: (value) => amount = double.parse(value),
                     ),
@@ -98,8 +114,13 @@ class _BudgetPageState extends State<BudgetPage> {
                   TextButton(
                     child: Text('Save'),
                     onPressed: () async {
+                      if (amount != 0){
                       await _addItem(duty, amount);
                       Navigator.of(context).pop();
+                      }else{
+                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Please enter the required'))
+                        );
+                        }
                     },
                   ),
                 ],

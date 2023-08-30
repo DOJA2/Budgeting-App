@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'dart:async';
 import '../database/incomesql.dart';
 //import 'package:path_provider/path_provider.dart';
@@ -15,12 +16,20 @@ class IncomePage extends StatefulWidget {
 
 class _IncomePageState extends State<IncomePage> {
   List<Map<String, dynamic>> _items = [];
+  String formattedDateTime = '';  // This will hold the formatted date and time
 
   @override
   void initState() {
     super.initState();
     _loadItems();
+    updateDateTime();
   }
+
+  void updateDateTime() {
+    final now = DateTime.now();
+    formattedDateTime = DateFormat('EEE, MMM dd yyyy').format(now);
+  }
+
 
   Future<void> _loadItems() async {
     final db = await SQLHelper.db();
@@ -52,7 +61,14 @@ class _IncomePageState extends State<IncomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Income Page'),
+        automaticallyImplyLeading: false,
+        title: Row(
+          children: [
+            Text('Income Page'),
+            Spacer(), // Takes up space in between
+            Text(formattedDateTime),
+          ],
+        ),
       ),
       body: ListView.builder(
         itemCount: _items.length,
@@ -83,13 +99,13 @@ class _IncomePageState extends State<IncomePage> {
                   children: [
                     TextFormField(
                       decoration: const InputDecoration(
-                        labelText: 'Duty'),
+                        labelText: 'Income Name'),
                       onChanged: (value) => duty = value,
                     ),
                     SizedBox(height: 10),
                     TextFormField(
                       decoration: const InputDecoration(
-                        labelText: 'Amount'),
+                        labelText: 'Income Amount'),
                       keyboardType: TextInputType.number,
                       onChanged: (value) => amount = double.parse(value),
                     ),
@@ -103,8 +119,13 @@ class _IncomePageState extends State<IncomePage> {
                   TextButton(
                     child: const Text('Save'),
                     onPressed: () async {
+                      if (duty.isNotEmpty && amount != 0){
                       await _addItem(duty, amount);
                       Navigator.of(context).pop();
+                      }else{
+                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Please enter the required'))
+                        );
+                        }
                     },
                   ),
                 ],

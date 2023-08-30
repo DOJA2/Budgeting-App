@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:saving_money/database/budgetsql.dart';
 import 'package:path/path.dart' as path; // Import for join function
 import 'package:sqflite/sqflite.dart' as sql;
 import 'package:saving_money/database/incomesql.dart' as Income;
+import '../database/expensessql.dart';
 
 class ReportPage extends StatefulWidget {
   @override
@@ -13,11 +15,12 @@ class _ReportPageState extends State<ReportPage> {
   double totalBudget = 0.0;
   double totalIncome = 0.0;
   double totalExpenses = 0.0;
-  double budget = 1000.0; // Replace with your actual budget value
-  double income = 5000.0; // Replace with your actual income value
-  double expenses = 1800.0; // Replace with your actual expenses value
-  double get savingAmount => totalIncome - expenses;
-  double get spendingAmount => totalBudget - expenses;
+  // double budget = 1000.0; // Replace with your actual budget value
+  // double income = 5000.0; // Replace with your actual income value
+  // double expenses = 1800.0; // Replace with your actual expenses value
+  double get savingAmount => totalIncome - totalExpenses;
+  double get spendingAmount => totalBudget - totalExpenses;
+  String formattedDateTime = '';  // This will hold the formatted date and time
 
   Color getSavingColor() {
     if (savingAmount > 0) {
@@ -44,7 +47,13 @@ class _ReportPageState extends State<ReportPage> {
     super.initState();
     _fetchTotalBudget();
     _fetchTotalIncome();
-    // _fetchTotalExpenses();
+    _fetchTotalExpenses();
+    updateDateTime();
+  }
+
+  void updateDateTime() {
+    final now = DateTime.now();
+    formattedDateTime = DateFormat('EEE, MMM dd yyyy').format(now);
   }
 
   Future<void> _fetchTotalBudget() async {
@@ -75,11 +84,33 @@ class _ReportPageState extends State<ReportPage> {
     }
   }
 
+   Future<void> _fetchTotalExpenses() async {
+    try {
+      final dbPath = await sql.getDatabasesPath();
+      final db = await sql.openDatabase(path.join(dbPath, 'expense.db'));
+      final totalExpenses = await Expensehelper.getTotalAmountExpense();
+      setState(() {
+        this.totalExpenses = totalExpenses;
+      });
+    } catch (error) {
+      // Handle error
+      print("Error fetching total expenses: $error");
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Daily Report'),
+        automaticallyImplyLeading: false,
+        title: Row(
+          children: [
+           Text('Daily Report'),
+        Spacer(), // Takes up space in between
+            Text(formattedDateTime),
+            ]
+            ),
+
       ),
       body: Container(
         padding: const EdgeInsets.all(20.0),
@@ -143,7 +174,7 @@ class _ReportPageState extends State<ReportPage> {
         children: [
           _buildAmountRow('Budget', totalBudget),
           _buildAmountRow('Income', totalIncome),
-          _buildAmountRow('Expenses', expenses),
+          _buildAmountRow('Expenses', totalExpenses),
         ],
       ),
     );
