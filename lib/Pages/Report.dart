@@ -20,7 +20,7 @@ class _ReportPageState extends State<ReportPage> {
   // double expenses = 1800.0; // Replace with your actual expenses value
   double get savingAmount => totalIncome - totalExpenses;
   double get spendingAmount => totalBudget - totalExpenses;
-  String formattedDateTime = '';  // This will hold the formatted date and time
+  String formattedDateTime = ''; // This will hold the formatted date and time
 
   Color getSavingColor() {
     if (savingAmount > 0) {
@@ -84,7 +84,7 @@ class _ReportPageState extends State<ReportPage> {
     }
   }
 
-   Future<void> _fetchTotalExpenses() async {
+  Future<void> _fetchTotalExpenses() async {
     try {
       final dbPath = await sql.getDatabasesPath();
       final db = await sql.openDatabase(path.join(dbPath, 'expense.db'));
@@ -98,34 +98,33 @@ class _ReportPageState extends State<ReportPage> {
     }
   }
 
+  
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
-        title: Row(
-          children: [
-           Text('Daily Report'),
-        Spacer(), // Takes up space in between
-            Text(formattedDateTime),
-            ]
-            ),
-
+        title: Row(children: [
+          Text('Daily Report'),
+          Spacer(), // Takes up space in between
+          Text(formattedDateTime),
+        ]),
       ),
       body: Container(
         padding: const EdgeInsets.all(20.0),
         decoration: BoxDecoration(
-    color: Colors.grey[200],
-    borderRadius: BorderRadius.circular(12),
-    boxShadow: [
-      BoxShadow(
-        color: Colors.grey,
-        offset: Offset(0, 2),
-        blurRadius: 4,
-        spreadRadius: 0,
-      ),
-    ],
-  ),
+          color: Colors.grey[200],
+          borderRadius: BorderRadius.circular(12),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.grey,
+              offset: Offset(0, 2),
+              blurRadius: 4,
+              spreadRadius: 0,
+            ),
+          ],
+        ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
@@ -154,7 +153,7 @@ class _ReportPageState extends State<ReportPage> {
     );
   }
 
-   Widget _buildUnifiedAmountContainer() {
+  Widget _buildUnifiedAmountContainer() {
     return Container(
       padding: const EdgeInsets.all(16.0),
       decoration: BoxDecoration(
@@ -181,41 +180,41 @@ class _ReportPageState extends State<ReportPage> {
   }
 
   Widget _buildAmountRow(String label, double amount) {
-  return Padding(
-    padding: const EdgeInsets.all(8.0),
-    // decoration: BoxDecoration(
-    //   color: Colors.grey[200],
-    //   borderRadius: BorderRadius.circular(1),
-    //   boxShadow: [
-    //     BoxShadow(
-    //       color: Colors.grey,
-    //       offset: Offset(0, 2),
-    //       blurRadius: 4,
-    //       spreadRadius: 0,
-    //     ),
-    //   ],
-    // ),
-    child: Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Text(
-          label,
-          style: TextStyle(
-            fontSize: 20,
-            fontWeight: FontWeight.bold,
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      // decoration: BoxDecoration(
+      //   color: Colors.grey[200],
+      //   borderRadius: BorderRadius.circular(1),
+      //   boxShadow: [
+      //     BoxShadow(
+      //       color: Colors.grey,
+      //       offset: Offset(0, 2),
+      //       blurRadius: 4,
+      //       spreadRadius: 0,
+      //     ),
+      //   ],
+      // ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(
+            label,
+            style: TextStyle(
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+            ),
           ),
-        ),
-        Text(
-          'Tsh ${amount.toStringAsFixed(2)}',
-          style: TextStyle(
-            fontSize: 18,
-            //fontWeight: FontWeight.bold,
+          Text(
+            'Tsh ${amount.toStringAsFixed(2)}',
+            style: TextStyle(
+              fontSize: 18,
+              //fontWeight: FontWeight.bold,
+            ),
           ),
-        ),
-      ],
-    ),
-  );
-}
+        ],
+      ),
+    );
+  }
 
   // Inside the _buildResultRow method
   Widget _buildResultRow(String label, double amount, Color color) {
@@ -259,7 +258,7 @@ class _ReportPageState extends State<ReportPage> {
           side: BorderSide(color: Colors.grey),
         ),
         child: Tooltip(
-          message:hint,// Display the hint when user hovers over the card
+          message: hint, // Display the hint when user hovers over the card
           child: Padding(
             padding: const EdgeInsets.all(16.0),
             child: Column(
@@ -298,3 +297,16 @@ class _ReportPageState extends State<ReportPage> {
     );
   }
 }
+
+// Future<void> getAmounts() async {
+//   await _fetchTotalBudget();
+//   await _fetchTotalIncome();
+//   await _fetchTotalExpenses();
+//   double savingAmount = totalIncome - totalExpenses;
+//   double spendingAmount = totalBudget - totalExpenses;
+//   setState(() {
+//     this.savingAmount = savingAmount;
+//     this.spendingAmount = spendingAmount;
+//   });
+// }
+

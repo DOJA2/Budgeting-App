@@ -1,3 +1,4 @@
+import 'package:intl/intl.dart';
 import 'package:sqflite/sqflite.dart' as sql;
 import 'package:flutter/foundation.dart';
 
@@ -9,6 +10,7 @@ class Expensehelper {
         title TEXT NOT NULL,
         duty TEXT NOT NULL,
         amount REAL NOT NULL,
+        todayDate TEXT NOT NULL,
         createdAt TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
       )
     """);
@@ -25,9 +27,20 @@ class Expensehelper {
     );
   }
 
-  static Future<int> createItem(String title,String duty, double amount) async {
+  // static Future<int> createItem(String title,String duty, double amount) async {
+  //   final db = await Expensehelper.db();
+  //   final data = {'title':title,'duty': duty, 'amount': amount};
+  //   final id = await db.insert('expensess', data,
+  //       conflictAlgorithm: sql.ConflictAlgorithm.replace);
+  //   return id;
+  // }
+
+  static Future<int> createItem(String title, String duty, double amount) async {
+    final todayDate =
+        DateFormat('yyyy-MM-dd').format(DateTime.now()).toString();
+
     final db = await Expensehelper.db();
-    final data = {'title':title,'duty': duty, 'amount': amount};
+    final data = {'title':title,'duty': duty, 'amount': amount, 'todayDate': todayDate};
     final id = await db.insert('expensess', data,
         conflictAlgorithm: sql.ConflictAlgorithm.replace);
     return id;

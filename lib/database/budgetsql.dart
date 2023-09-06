@@ -1,5 +1,6 @@
 import 'package:sqflite/sqflite.dart' as sql;
 import 'package:flutter/foundation.dart';
+import 'package:intl/intl.dart';
 
 class SQLHelper {
   static Future<void> createTables(sql.Database database) async {
@@ -8,6 +9,7 @@ class SQLHelper {
         id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
         duty TEXT NOT NULL,
         amount INTEGER NOT NULL,
+        todayDate TEXT NOT NULL,
         createdAt TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
       )
     """);
@@ -25,22 +27,39 @@ class SQLHelper {
   }
 
   static Future<int> createItem(String duty, double amount) async {
+    final todayDate =
+        DateFormat('yyyy-MM-dd').format(DateTime.now()).toString();
+
     final db = await SQLHelper.db();
-    final data = {'duty': duty, 'amount': amount};
+    final data = {'duty': duty, 'amount': amount, 'todayDate': todayDate};
     final id = await db.insert('budget', data,
         conflictAlgorithm: sql.ConflictAlgorithm.replace);
     return id;
   }
 
-  static Future<List<Map<String, dynamic>>> getItems() async {
-    final db = await SQLHelper.db();
-    return db.query('budget', orderBy: "id");
-  }
+  // static Future<List<Map<String, dynamic>>> getItems() async {
+  //   final db = await SQLHelper.db();
+  //   return db.query('budget', orderBy: "id");
+  // }
 
-  static Future<List<Map<String, dynamic>>> getItem(int id) async {
-    final db = await SQLHelper.db();
-    return db.query('budget', where: "id = ?", whereArgs: [id], limit: 1);
-  }
+  // static Future<List<Map<String, dynamic>>> getItem(int id) async {
+  //   final db = await SQLHelper.db();
+  //   return db.query('budget',where:"date=  AND id = ? ", whereArgs: [id], limit: 1);
+  // }
+
+  // static Future<List<Map<String, dynamic>>> getItem(int id) async {
+  //   final db = await SQLHelper.db();
+
+  //   final formatteTodayDate =
+  //       DateFormat('yyyy-MM-dd').format(DateTime.now()).toString();
+
+  //   print("HEREEEEEEEEEE::::::::::::::::::::::::::::");
+  //   print(formatteTodayDate);
+  //   return db.query('budget',
+  //       where: "todayDate = ? AND id = ?",
+  //       whereArgs: [formatteTodayDate, id],
+  //       limit: 1);
+  // }
 
   static Future<int> updateItem(int id, String duty, double amount) async {
     final db = await SQLHelper.db();
@@ -66,8 +85,8 @@ class SQLHelper {
   static Future<double> getTotalAmountBudget() async {
     final db = await SQLHelper.db();
     final result = await db.rawQuery('SELECT SUM(amount) FROM budget');
-    return double.parse((result.first['SUM(amount)'] ?? 0) .toString());
-  } 
+    return double.parse((result.first['SUM(amount)'] ?? 0).toString());
+  }
 
   static Future<List<String>> getDutyNames() async {
     final db = await SQLHelper.db();

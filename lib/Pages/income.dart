@@ -2,10 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'dart:async';
 import '../database/incomesql.dart';
-//import 'package:path_provider/path_provider.dart';
-//import 'package:sqflite/sqflite.dart';
-//import 'dart:io';
-//import 'database_helper.dart';
 
 class IncomePage extends StatefulWidget {
   const IncomePage({super.key});
@@ -33,7 +29,10 @@ class _IncomePageState extends State<IncomePage> {
 
   Future<void> _loadItems() async {
     final db = await SQLHelper.db();
-    final items = await db.query('income', orderBy: 'createdAt DESC');
+    final formatteTodayDate =
+        DateFormat('yyyy-MM-dd').format(DateTime.now()).toString();
+    final items = await db.query('income', where: "todayDate = ?",
+        whereArgs: [formatteTodayDate], orderBy: 'createdAt DESC');
     setState(() {
       _items = items;
     });
@@ -76,7 +75,12 @@ class _IncomePageState extends State<IncomePage> {
           final item = _items[index];
           return ListTile(
             title: Text(item['duty']),
-            subtitle: Text('Tsh ${item['amount']}'),
+            subtitle: Column(
+              children: [
+                Text('Tsh ${item['amount']}'),
+                Text('Date: ${item['todayDate']}'),
+              ],
+            ),
             trailing: IconButton(
               icon: const Icon(Icons.delete),
               onPressed: () => _deleteItem(item['id']),

@@ -14,7 +14,7 @@ class BudgetPage extends StatefulWidget {
 
 class _BudgetPageState extends State<BudgetPage> {
   List<Map<String, dynamic>> _items = [];
-  String formattedDateTime = '';  // This will hold the formatted date and time
+  String formattedDateTime = ''; // This will hold the formatted date and time
 
   @override
   void initState() {
@@ -23,14 +23,17 @@ class _BudgetPageState extends State<BudgetPage> {
     updateDateTime();
   }
 
-   void updateDateTime() {
+  void updateDateTime() {
     final now = DateTime.now();
     formattedDateTime = DateFormat('EEE, MMM dd yyyy').format(now);
   }
 
   Future<void> _loadItems() async {
     final db = await SQLHelper.db();
-    final items = await db.query('budget', orderBy: 'createdAt DESC');
+    final formatteTodayDate =
+        DateFormat('yyyy-MM-dd').format(DateTime.now()).toString();
+    final items = await db.query('budget', where: "todayDate = ?",
+        whereArgs: [formatteTodayDate], orderBy: 'createdAt DESC');
     setState(() {
       _items = items;
     });
@@ -59,7 +62,7 @@ class _BudgetPageState extends State<BudgetPage> {
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
-         title: Row(
+        title: Row(
           children: [
             Text('Budget Page'),
             Spacer(), // Takes up space in between
@@ -73,7 +76,12 @@ class _BudgetPageState extends State<BudgetPage> {
           final item = _items[index];
           return ListTile(
             title: Text(item['duty']),
-            subtitle: Text('Tsh ${item['amount']}'),
+            subtitle: Column(
+              children: [
+                Text('Tsh ${item['amount']}'),
+                Text('Date: ${item['todayDate']}'),
+              ],
+            ),
             trailing: IconButton(
               icon: Icon(Icons.delete),
               onPressed: () => _deleteItem(item['id']),
@@ -95,9 +103,9 @@ class _BudgetPageState extends State<BudgetPage> {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     TextFormField(
-  decoration: InputDecoration(hintText: 'Budget Name'),
-  onChanged: (value) => duty = value,
-),
+                      decoration: InputDecoration(hintText: 'Budget Name'),
+                      onChanged: (value) => duty = value,
+                    ),
                     SizedBox(height: 10),
                     TextFormField(
                       decoration: InputDecoration(hintText: 'Budget Amount'),
@@ -114,13 +122,13 @@ class _BudgetPageState extends State<BudgetPage> {
                   TextButton(
                     child: Text('Save'),
                     onPressed: () async {
-                      if (amount != 0){
-                      await _addItem(duty, amount);
-                      Navigator.of(context).pop();
-                      }else{
-                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Please enter the required'))
-                        );
-                        }
+                      if (amount != 0) {
+                        await _addItem(duty, amount);
+                        Navigator.of(context).pop();
+                      } else {
+                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                            content: Text('Please enter the required')));
+                      }
                     },
                   ),
                 ],

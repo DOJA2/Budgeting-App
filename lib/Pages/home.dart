@@ -1,13 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:saving_money/Pages/Report.dart';
-import 'package:saving_money/Pages/budget.dart';
-//import 'package:saving_money/Pages/bugdet.dart';
-import 'package:saving_money/Pages/history.dart';
-import 'package:saving_money/Pages/income.dart';
-
-
-
-import 'expenses.dart';
+import './Report.dart';
+import './budget.dart';
+import './history.dart';
+import './income.dart';
+import './expenses.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
