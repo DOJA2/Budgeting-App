@@ -1,79 +1,102 @@
- //import 'package:flutter/foundation.dart';
-import 'package:flutter/foundation.dart';
-import 'package:intl/intl.dart';
-import 'package:sqflite/sqflite.dart' as sql;
+//  //import 'package:flutter/foundation.dart';
+// import 'package:flutter/foundation.dart';
+// import 'package:intl/intl.dart';
+// import 'package:sqflite/sqflite.dart' as sql;
 
-//create a table of budget
-class SQLHelper {
-  static Future<void> createTables(sql.Database database) async {
-    await database.execute("""CREATE TABLE income(
-      id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
-      duty TEXT NOT NULL,
-      amount INTEGER NOT NULL,
-      todayDate TEXT NOT NULL,
-      createdAt TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
-    )""");
-  }
-
-  static Future<sql.Database> db() async {
-    return sql.openDatabase(
-      'dbincome.db',
-      version: 1,
-      onCreate: (sql.Database database, int version) async {
-        print("...creating a table...");
-        await createTables(database);
-      },
-    );
-  }
-
-  static Future<int> createItem(String duty, double amount) async {
-    final todayDate =
-        DateFormat('yyyy-MM-dd').format(DateTime.now()).toString();
-
-    final db = await SQLHelper.db();
-    final data = {'duty': duty, 'amount': amount, 'todayDate': todayDate};
-    final id = await db.insert('income', data,
-        conflictAlgorithm: sql.ConflictAlgorithm.replace);
-    return id;
-  }
-
-// //retreive of data orderBy id
-//   static Future<List<Map<String, dynamic>>> getItems() async {
-//     final db = await SQLHelper.db();
-//     return db.query('income', orderBy: "id");
+// //create a table of budget
+// class IncomeHelper {
+//   static Future<void> createTables(sql.Database database) async {
+//     await database.execute("""CREATE TABLE income(
+//       id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+//       duty TEXT NOT NULL,
+//       amount REAL NOT NULL,
+//       todayDate TEXT NOT NULL,
+//       createdAt TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+//     )""");
 //   }
 
-// //responsible for getting one item from database
-//   static Future<List<Map<String, dynamic>>> getItem(int id) async {
-//     final db = await SQLHelper.db();
-//     return db.query('income', where: "id = ?", whereArgs: [id], limit: 1);
+//   static Future<sql.Database> db() async {
+//     return sql.openDatabase(
+//       'dbincome.db',
+//       version: 1,
+//       onCreate: (sql.Database database, int version) async {
+//         print("...creating a table...");
+//         await createTables(database);
+//       },
+//     );
 //   }
 
-  static Future<int> updateItem(int id, String duty, double amount) async {
-    final db = await SQLHelper.db();
+//   static Future<int> createItem(String duty, double amount) async {
+//     final todayDate =
+//         DateFormat('yyyy-MM-dd').format(DateTime.now()).toString();
 
-    final data = {
-      'duty': duty,
-      'amount': amount,
-      'createdAt': DateTime.now().toString()
-    };
-    final result =
-        await db.update('income', data, where: "id = ?", whereArgs: [id]);
-    return result;
-  }
+//     final db = await IncomeHelper.db();
+//     final data = {'duty': duty, 'amount': amount, 'todayDate': todayDate};
+//     final id = await db.insert('income', data,
+//         conflictAlgorithm: sql.ConflictAlgorithm.replace);
+//     return id;
+//   }
 
-  static Future<void> deleteItem(int id) async {
-    final db = await SQLHelper.db();
-    try {
-      await db.delete("income", where: "id = ?", whereArgs: [id]);
-    } catch (err) {
-      debugPrint("Something went wrong when deleting an item: $err");
-    }
-  }
+// //   static Future<int> insertIncome(String duty, double amount) async {
+// //   final db = await SQLHelper.db();
+// //   final data = {'duty': duty, 'amount': amount};
+// //   final id = await db.insert('income', data,
+// //       conflictAlgorithm: sql.ConflictAlgorithm.replace);
+// //   return id;
+// // }
 
-  static Future<double> getTotalAmount() async {
-    final db = await SQLHelper.db();
-    final result = await db.rawQuery('SELECT SUM(amount) FROM income');
-    return double.parse((result.first['SUM(amount)'] ?? 0).toString());
-  }
-}
+// // //retreive of data orderBy id
+// //   static Future<List<Map<String, dynamic>>> getItems() async {
+// //     final db = await SQLHelper.db();
+// //     return db.query('income', orderBy: "id");
+// //   }
+
+// // //responsible for getting one item from database
+// //   static Future<List<Map<String, dynamic>>> getItem(int id) async {
+// //     final db = await SQLHelper.db();
+// //     return db.query('income', where: "id = ?", whereArgs: [id], limit: 1);
+// //   }
+
+//   static Future<int> updateItem(int id, String duty, double amount) async {
+//     final db = await IncomeHelper.db();
+
+//     final data = {
+//       'duty': duty,
+//       'amount': amount,
+//       'createdAt': DateTime.now().toString()
+//     };
+//     final result =
+//         await db.update('income', data, where: "id = ?", whereArgs: [id]);
+//     return result;
+//   }
+
+//   static Future<void> deleteItem(int id) async {
+//     final db = await IncomeHelper.db();
+//     try {
+//       await db.delete("income", where: "id = ?", whereArgs: [id]);
+//     } catch (err) {
+//       debugPrint("Something went wrong when deleting an item: $err");
+//     }
+//   }
+
+//   static Future<double> getTotalAmount() async {
+//     final db = await IncomeHelper.db();
+//     final result = await db.rawQuery('SELECT SUM(amount) FROM income');
+//     return double.parse((result.first['SUM(amount)'] ?? 0).toString());
+//   }
+
+//   static Future<List<Map<String, dynamic>>> getAmountAndDateIncome() async {
+//   final db = await IncomeHelper.db();
+//   final result = await db.rawQuery('SELECT SUM(amount) AS totalAmountIncome, todayDate FROM income GROUP BY todayDate');
+//   return result;
+// }
+
+// static Future<double> getTotalAmountForDayIncome(String date) async {
+//     final db = await IncomeHelper.db();
+//     final result = await db.rawQuery(
+//       'SELECT SUM(amount) AS totalAmount FROM income WHERE todayDate = ?',
+//       [date],
+//     );
+//     return double.parse((result.first['totalAmount'] ?? 0).toString());
+//   }
+// }

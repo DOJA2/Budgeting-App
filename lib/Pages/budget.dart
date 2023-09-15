@@ -9,10 +9,10 @@ import 'dart:async';
 
 class BudgetPage extends StatefulWidget {
   @override
-  _BudgetPageState createState() => _BudgetPageState();
+  BudgetPageState createState() => BudgetPageState();
 }
 
-class _BudgetPageState extends State<BudgetPage> {
+class BudgetPageState extends State<BudgetPage> {
   List<Map<String, dynamic>> _items = [];
   String formattedDateTime = ''; // This will hold the formatted date and time
 
@@ -49,7 +49,7 @@ class _BudgetPageState extends State<BudgetPage> {
     await _loadItems();
   }
 
-  double _getTotalAmount() {
+  double getTotalAmount() {
     double total = 0;
     for (final item in _items) {
       total += item['amount'];
@@ -71,24 +71,32 @@ class _BudgetPageState extends State<BudgetPage> {
         ),
       ),
       body: ListView.builder(
-        itemCount: _items.length,
-        itemBuilder: (context, index) {
-          final item = _items[index];
-          return ListTile(
-            title: Text(item['duty']),
-            subtitle: Column(
-              children: [
-                Text('Tsh ${item['amount']}'),
-                Text('Date: ${item['todayDate']}'),
-              ],
-            ),
-            trailing: IconButton(
-              icon: Icon(Icons.delete),
-              onPressed: () => _deleteItem(item['id']),
-            ),
-          );
-        },
-      ),
+  itemCount: _items.length,
+  itemBuilder: (context, index) {
+    final item = _items[index];
+    return Column(
+      children: <Widget>[
+        ListTile(
+          title: Text(item['duty']),
+          subtitle: Column(
+            children: [
+              Text('Tsh ${item['amount']}'),
+              Text('Date: ${item['todayDate']}'),
+            ],
+          ),
+          trailing: IconButton(
+            icon: Icon(Icons.delete),
+            onPressed: () => _deleteItem(item['id']),
+          ),
+        ),
+        const Divider( // Add a Divider between each ListTile
+          height: 1, // Specify the height of the Divider
+          color: Colors.grey, // Specify the color of the Divider
+        ),
+      ],
+    );
+  },
+),
       floatingActionButton: FloatingActionButton(
         child: Icon(Icons.add),
         onPressed: () {
@@ -142,7 +150,7 @@ class _BudgetPageState extends State<BudgetPage> {
           height: 50,
           child: Center(
             child: Text(
-              'Total Amount: Tsh ${_getTotalAmount()}',
+              'Total Amount: Tsh ${getTotalAmount()}',
               style: TextStyle(fontSize: 20),
             ),
           ),

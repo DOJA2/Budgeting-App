@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'dart:async';
-import '../database/incomesql.dart';
+import '../database/budgetsql.dart';
+// import '../database/incomesql.dart';
 
 class IncomePage extends StatefulWidget {
   const IncomePage({super.key});
@@ -39,12 +40,12 @@ class _IncomePageState extends State<IncomePage> {
   }
 
   Future<void> _addItem(String duty, double amount) async {
-    await SQLHelper.createItem(duty, amount);
+    await SQLHelper.createItemIncome(duty, amount);
     await _loadItems();
   }
 
   Future<void> _deleteItem(int id) async {
-    await SQLHelper.deleteItem(id);
+    await SQLHelper.deleteItemIncome(id);
     await _loadItems();
   }
 
@@ -70,24 +71,32 @@ class _IncomePageState extends State<IncomePage> {
         ),
       ),
       body: ListView.builder(
-        itemCount: _items.length,
-        itemBuilder: (context, index) {
-          final item = _items[index];
-          return ListTile(
-            title: Text(item['duty']),
-            subtitle: Column(
-              children: [
-                Text('Tsh ${item['amount']}'),
-                Text('Date: ${item['todayDate']}'),
-              ],
-            ),
-            trailing: IconButton(
-              icon: const Icon(Icons.delete),
-              onPressed: () => _deleteItem(item['id']),
-            ),
-          );
-        },
-      ),
+  itemCount: _items.length,
+  itemBuilder: (context, index) {
+    final item = _items[index];
+    return Column(
+      children: <Widget>[
+        ListTile(
+          title: Text(item['duty']),
+          subtitle: Column(
+            children: [
+              Text('Tsh ${item['amount']}'),
+              Text('Date: ${item['todayDate']}'),
+            ],
+          ),
+          trailing: IconButton(
+            icon: Icon(Icons.delete),
+            onPressed: () => _deleteItem(item['id']),
+          ),
+        ),
+        const Divider( // Add a Divider between each ListTile
+          height: 1, // Specify the height of the Divider
+          color: Colors.grey, // Specify the color of the Divider
+        ),
+      ],
+    );
+  },
+),
       floatingActionButton: FloatingActionButton(
         child: const Icon(Icons.add),
         onPressed: () {

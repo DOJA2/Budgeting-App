@@ -3,15 +3,16 @@ import 'package:intl/intl.dart';
 import 'package:saving_money/database/budgetsql.dart';
 import 'package:path/path.dart' as path; // Import for join function
 import 'package:sqflite/sqflite.dart' as sql;
-import 'package:saving_money/database/incomesql.dart' as Income;
-import '../database/expensessql.dart';
+// import 'package:saving_money/database/incomesql.dart';
+// import '../database/expensessql.dart';
+
 
 class ReportPage extends StatefulWidget {
   @override
-  _ReportPageState createState() => _ReportPageState();
+  ReportPageState createState() => ReportPageState();
 }
 
-class _ReportPageState extends State<ReportPage> {
+class ReportPageState extends State<ReportPage> { 
   double totalBudget = 0.0;
   double totalIncome = 0.0;
   double totalExpenses = 0.0;
@@ -45,9 +46,9 @@ class _ReportPageState extends State<ReportPage> {
   @override
   void initState() {
     super.initState();
-    _fetchTotalBudget();
-    _fetchTotalIncome();
-    _fetchTotalExpenses();
+    fetchTotalBudget();
+    fetchTotalIncome();
+    fetchTotalExpenses();
     updateDateTime();
   }
 
@@ -55,12 +56,13 @@ class _ReportPageState extends State<ReportPage> {
     final now = DateTime.now();
     formattedDateTime = DateFormat('EEE, MMM dd yyyy').format(now);
   }
-
-  Future<void> _fetchTotalBudget() async {
+  Future<void> fetchTotalBudget() async {
+    final formatteTodayDate =
+        DateFormat('yyyy-MM-dd').format(DateTime.now()).toString();
     try {
       final dbPath = await sql.getDatabasesPath();
       final db = await sql.openDatabase(path.join(dbPath, 'dbmoney.db'));
-      final totalBudget = await SQLHelper.getTotalAmountBudget();
+      final totalBudget = await SQLHelper.getTotalAmountForDayBudget(formatteTodayDate);
       setState(() {
         this.totalBudget = totalBudget;
       });
@@ -70,11 +72,13 @@ class _ReportPageState extends State<ReportPage> {
     }
   }
 
-  Future<void> _fetchTotalIncome() async {
+  Future<void> fetchTotalIncome() async {
+    final formatteTodayDate =
+        DateFormat('yyyy-MM-dd').format(DateTime.now()).toString();
     try {
       final dbPath = await sql.getDatabasesPath();
       final db = await sql.openDatabase(path.join(dbPath, 'dbincome.db'));
-      final totalIncome = await Income.SQLHelper.getTotalAmount();
+      final totalIncome = await SQLHelper.getTotalAmountForDayIncome(formatteTodayDate);
       setState(() {
         this.totalIncome = totalIncome;
       });
@@ -84,11 +88,13 @@ class _ReportPageState extends State<ReportPage> {
     }
   }
 
-  Future<void> _fetchTotalExpenses() async {
+  Future<void> fetchTotalExpenses() async {
+    final formatteTodayDate =
+        DateFormat('yyyy-MM-dd').format(DateTime.now()).toString();
     try {
       final dbPath = await sql.getDatabasesPath();
       final db = await sql.openDatabase(path.join(dbPath, 'expense.db'));
-      final totalExpenses = await Expensehelper.getTotalAmountExpense();
+      final totalExpenses = await SQLHelper.getTotalAmountForDayExpenses(formatteTodayDate);
       setState(() {
         this.totalExpenses = totalExpenses;
       });
@@ -98,15 +104,13 @@ class _ReportPageState extends State<ReportPage> {
     }
   }
 
-  
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
         title: Row(children: [
-          Text('Daily Report'),
+          Text('Day Report'),
           Spacer(), // Takes up space in between
           Text(formattedDateTime),
         ]),
@@ -116,7 +120,7 @@ class _ReportPageState extends State<ReportPage> {
         decoration: BoxDecoration(
           color: Colors.grey[200],
           borderRadius: BorderRadius.circular(12),
-          boxShadow: [
+          boxShadow: const [
             BoxShadow(
               color: Colors.grey,
               offset: Offset(0, 2),
@@ -128,13 +132,13 @@ class _ReportPageState extends State<ReportPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            _buildHeader(),
+            buildHeader(),
             SizedBox(height: 20),
-            _buildUnifiedAmountContainer(),
+            buildUnifiedAmountContainer(),
             SizedBox(height: 20),
-            _buildResultRow('Saving Amount', savingAmount, getSavingColor()),
+            buildResultRow('Saving Amount', savingAmount, getSavingColor()),
             SizedBox(height: 20),
-            _buildResultRow(
+            buildResultRow(
                 'Spending Amount', spendingAmount, getSpendingColor()),
           ],
         ),
@@ -142,8 +146,8 @@ class _ReportPageState extends State<ReportPage> {
     );
   }
 
-  Widget _buildHeader() {
-    return Text(
+  Widget buildHeader() {
+    return const Text(
       'REPORT',
       style: TextStyle(
         fontSize: 24,
@@ -153,13 +157,13 @@ class _ReportPageState extends State<ReportPage> {
     );
   }
 
-  Widget _buildUnifiedAmountContainer() {
-    return Container(
+  Widget buildUnifiedAmountContainer() {
+        return Container(
       padding: const EdgeInsets.all(16.0),
       decoration: BoxDecoration(
         color: Colors.grey[200],
         borderRadius: BorderRadius.circular(12),
-        boxShadow: [
+        boxShadow: const [
           BoxShadow(
             color: Colors.grey,
             offset: Offset(0, 2),
@@ -171,15 +175,15 @@ class _ReportPageState extends State<ReportPage> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          _buildAmountRow('Budget', totalBudget),
-          _buildAmountRow('Income', totalIncome),
-          _buildAmountRow('Expenses', totalExpenses),
+          buildAmountRow('Budget', totalBudget),
+          buildAmountRow('Income', totalIncome),
+          buildAmountRow('Expenses', totalExpenses),
         ],
       ),
     );
   }
 
-  Widget _buildAmountRow(String label, double amount) {
+  Widget buildAmountRow(String label, double amount) {
     return Padding(
       padding: const EdgeInsets.all(8.0),
       // decoration: BoxDecoration(
@@ -199,14 +203,14 @@ class _ReportPageState extends State<ReportPage> {
         children: [
           Text(
             label,
-            style: TextStyle(
+            style: const TextStyle(
               fontSize: 20,
               fontWeight: FontWeight.bold,
             ),
           ),
           Text(
             'Tsh ${amount.toStringAsFixed(2)}',
-            style: TextStyle(
+            style: const TextStyle(
               fontSize: 18,
               //fontWeight: FontWeight.bold,
             ),
@@ -217,7 +221,7 @@ class _ReportPageState extends State<ReportPage> {
   }
 
   // Inside the _buildResultRow method
-  Widget _buildResultRow(String label, double amount, Color color) {
+  Widget buildResultRow(String label, double amount, Color color) {
     String message = '';
     Color messageColor = Colors.black; // Initialize with a default color
     String hint = '';
@@ -255,7 +259,7 @@ class _ReportPageState extends State<ReportPage> {
         color: Colors.grey[200], // Set the card background color to grey
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(12),
-          side: BorderSide(color: Colors.grey),
+          side: const BorderSide(color: Colors.grey),
         ),
         child: Tooltip(
           message: hint, // Display the hint when user hovers over the card
@@ -266,12 +270,12 @@ class _ReportPageState extends State<ReportPage> {
               children: [
                 Text(
                   label,
-                  style: TextStyle(
+                  style: const TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                SizedBox(height: 5), // Add some space
+                const SizedBox(height: 5), // Add some space
                 Text(
                   'Tsh ${amount.toStringAsFixed(2)}',
                   style: TextStyle(
