@@ -15,7 +15,7 @@ class _ExpensesPageState extends State<ExpensesPage> {
   String formattedDateTime = '';
   List<Map<String, dynamic>> _items = []; //fetch items created on database
   // List<Map<String, dynamic>> selectedBudgetItem = [];
-  // List<Map<String, dynamic>> items = []; //fetch items created on database
+  List<Map<String, dynamic>> items = []; //fetch items created on database
   // String? duty;
   // double? amount;
   
@@ -122,26 +122,30 @@ class _ExpensesPageState extends State<ExpensesPage> {
       ),
        body: ListView.builder(
         itemCount: _items.length,
-        itemBuilder: (BuildContext context, int index) {
-          Map<String, dynamic> item = _items[index];
-          return ExpansionTile(
-            title: Text(item['selectedBudgetItem']?? ''),
-            children: _items.map<Widget>((item) {
-              return Column(
-                children: <Widget>[
-                  ListTile(
-                    title: Text(item['duty']),
-                    subtitle: Text(item['amount'].toString()),
-                    trailing: IconButton(
+        itemBuilder: (context,index) {
+          final item = _items[index];
+          return Column(
+            children: <Widget> [
+              ExpansionTile(
+                title: Text(item['selectedBudgetItem']?? ''),
+                children: _items.map<Widget>((item) {
+                  return Column(
+                    children: <Widget>[
+                      ListTile(
+                        title: Text(item['duty']),
+                        subtitle: Text(item['amount'].toString()),
+                        trailing: IconButton(
   icon: const Icon(Icons.delete),
   onPressed: () {
     // ...
   },
 ),
-                  ),
-                ],
-              );
-            }).toList(),
+                      ),
+                    ],
+                  );
+                }).toList(),
+              ),
+            ],
           );
         },
       ),

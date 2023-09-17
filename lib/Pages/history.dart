@@ -25,7 +25,6 @@ class _HistoryState extends State<History> {
   void initState() {
     super.initState();
     updateDateTime();
-    // _fetchTotalBudget();
     fetchAmountDateBudget();
     fetchTotalIncome();
     fetchTotalExpenses();
@@ -36,20 +35,6 @@ class _HistoryState extends State<History> {
     formattedDateTime = DateFormat('EEE, MMM dd yyy').format(now);
   }
 
-  // Future<void> _fetchTotalBudget() async {
-  //   try {
-  //     final dbPath = await sql.getDatabasesPath();
-  //     final db = await sql.openDatabase(path.join(dbPath, 'dbmoney.db'));
-  //     final totalBudget = await SQLHelper.getTotalAmountBudget();
-  //     setState(() {
-  //       this.totalBudget = totalBudget;
-  //     });
-  //   } catch (error) {
-  //     // Handle error
-  //     print("Error fetching total budget: $error");
-  //   }
-  // }
-
   Future<void> fetchAmountDateBudget() async {
     try {
       final dbPath = await sql.getDatabasesPath();
@@ -59,7 +44,7 @@ class _HistoryState extends State<History> {
         _historyList.addAll(amountDateBudget.map((data) {
           // Check if 'totalAmountBudget' is not null before casting
           final totalAmountBudget = data['totalAmountBudget'] != null
-              ? (data['totalAmountBudget'] as double?)
+              ? (data['totalAmountBudget'] as double)
               : null;
 
           // Format the date
@@ -85,7 +70,7 @@ class _HistoryState extends State<History> {
   Future<void> fetchTotalIncome() async {
     try {
       final dbPath = await sql.getDatabasesPath();
-      final db = await sql.openDatabase(path.join(dbPath, 'dbincome.db'));
+      final db = await sql.openDatabase(path.join(dbPath, 'dbmoney.db'));
       final amountDateIncome = await SQLHelper.getAmountAndDateIncome();
       setState(() {
         _historyList.addAll(amountDateIncome.map((data) {
@@ -116,7 +101,7 @@ class _HistoryState extends State<History> {
   Future<void> fetchTotalExpenses() async {
     try {
       final dbPath = await sql.getDatabasesPath();
-      final db = await sql.openDatabase(path.join(dbPath, 'expense.db'));
+      final db = await sql.openDatabase(path.join(dbPath, 'dbmoney.db'));
       final amountDateExpenses = await SQLHelper.getAmountAndDateExpenses();
       setState(() {
         _historyList.addAll(amountDateExpenses.map((data) {
@@ -162,11 +147,13 @@ class _HistoryState extends State<History> {
           itemBuilder: (context, index) {
             final historyData = _historyList[index];
             print(historyData);
+            print('lets gooo');
             final date = historyData['todayDate'] as String;
-            final totalAmountBudget = historyData['totalAmountudget'];
+            final totalAmountBudget = historyData['totalAmountBudget'];
             final totalAmountIncome = historyData['totalAmountIncome'];
             final totalAmountExpenses = historyData['totalAmountExpenses'];
             print(totalAmountBudget);
+            print(totalAmountIncome);
 
             return Column(
               children: <Widget>[
