@@ -3,8 +3,6 @@ import 'package:intl/intl.dart';
 import 'package:path/path.dart' as path; // Import for join function
 import 'package:sqflite/sqflite.dart' as sql;
 import '../database/budgetsql.dart';
-import '../database/expensessql.dart';
-import '../database/incomesql.dart';
 
 class History extends StatefulWidget {
   const History({super.key});
@@ -19,15 +17,14 @@ class _HistoryState extends State<History> {
   double amountDateIncome = 0.0;
   double amountDateExpenses = 0.0;
   final List<Widget> listTiles = [];
-  List<Map<String, dynamic>> _historyList = [];
+  final List<Map<String, dynamic>> _historyList = [];
+  
 
   @override
   void initState() {
     super.initState();
     updateDateTime();
-    fetchAmountDateBudget();
-    fetchTotalIncome();
-    fetchTotalExpenses();
+    fetchAmountForDays();
   }
 
   void updateDateTime() {
@@ -35,99 +32,99 @@ class _HistoryState extends State<History> {
     formattedDateTime = DateFormat('EEE, MMM dd yyy').format(now);
   }
 
-  Future<void> fetchAmountDateBudget() async {
+   Future<void> fetchAmountForDays() async {
     try {
       final dbPath = await sql.getDatabasesPath();
       final db = await sql.openDatabase(path.join(dbPath, 'dbmoney.db'));
+
       final amountDateBudget = await SQLHelper.getAmountAndDateBudget();
-      setState(() {
-        _historyList.addAll(amountDateBudget.map((data) {
-          // Check if 'totalAmountBudget' is not null before casting
-          final totalAmountBudget = data['totalAmountBudget'] != null
-              ? (data['totalAmountBudget'] as double)
-              : null;
-
-          // Format the date
-          final date = DateTime.parse(data['todayDate']);
-          final formattedDate = DateFormat('EEE, MMM dd yyy').format(date);
-
-          return {
-            'todayDate': formattedDate,
-            'totalAmountBudget': totalAmountBudget,
-          };
-        }).toList());
-      });
-      print(amountDateBudget);
-      print("Hereeeeeeee");
-      print(_historyList);
-      print("heeeerrree");
-    } catch (error) {
-      // Handle error
-      print("Error fetching total budget: $error");
-    }
-  }
-
-  Future<void> fetchTotalIncome() async {
-    try {
-      final dbPath = await sql.getDatabasesPath();
-      final db = await sql.openDatabase(path.join(dbPath, 'dbmoney.db'));
       final amountDateIncome = await SQLHelper.getAmountAndDateIncome();
+      final amountDateExpenses = await SQLHelper.getAmountAndDateExpenses();
+
+      // Group the data by day
+      final groupedData = groupDataByDay(amountDateBudget, amountDateIncome, amountDateExpenses);
+
       setState(() {
-        _historyList.addAll(amountDateIncome.map((data) {
-          // Convert 'totalAmount' to double
-          final totalAmountIncome = data['totalAmountIncome'] != null
-              ? (data['totalAmountIncome'] as double)
-              : null;
-
-          // Format the date
-          final date = DateTime.parse(data['todayDate']);
-          final formattedDate = DateFormat('EEE, MMM dd yyy').format(date);
-
-          return {
-            'todayDate': formattedDate,
-            'totalAmountIncome': totalAmountIncome,
-          };
-        }));
+        _historyList.addAll(groupedData);
       });
-      print(amountDateIncome);
-      print("heeeerrree");
+
+      print("Here are the amounts for each day:");
       print(_historyList);
     } catch (error) {
       // Handle error
-      print("Error fetching total income: $error");
+      print("Error fetching amounts for days: $error");
     }
   }
 
-  Future<void> fetchTotalExpenses() async {
-    try {
-      final dbPath = await sql.getDatabasesPath();
-      final db = await sql.openDatabase(path.join(dbPath, 'dbmoney.db'));
-      final amountDateExpenses = await SQLHelper.getAmountAndDateExpenses();
-      setState(() {
-        _historyList.addAll(amountDateExpenses.map((data) {
-          // Check if 'totalAmountExpenses' is not null before casting
-          final totalAmountExpenses = data['totalAmountExpenses'] != null
-              ? (data['totalAmountExpenses']
-                  as double?) // Cast to double or null
-              : null; // Set it to null if it's null in the database
+  List<Map<String, dynamic>> groupDataByDay(
+      List<Map<String, dynamic>> budgetData,
+      List<Map<String, dynamic>> incomeData,
+      List<Map<String, dynamic>> expensesData) {
+    final Map<String, Map<String, dynamic>> groupedData = {};
 
-          // Format the date
-          final date = DateTime.parse(data['todayDate']);
-          final formattedDate = DateFormat('EEE, MMM dd yyy').format(date);
-
-          return {
-            'todayDate': formattedDate,
-            'totalAmountExpenses': totalAmountExpenses,
-          };
-        }).toList());
-      });
-      print(amountDateExpenses);
-      print("heeeerrree");
-      print(_historyList);
-    } catch (error) {
-      // Handle error
-      print("Error fetching total expenses: $error");
+    // Initialize values to zero for each day
+    for (final data in budgetData) {
+      final date = data['todayDate'];
+      groupedData[date] = {
+        'todayDate': date,
+        'totalAmountBudget': 0.0,
+        'totalAmountIncome': 0.0,
+        'totalAmountExpenses': 0.0,
+      };
     }
+
+    for (final data in incomeData) {
+      final date = data['todayDate'];
+      if (!groupedData.containsKey(date)) {
+        groupedData[date] = {
+          'todayDate': date,
+          'totalAmountBudget': 0.0,
+          'totalAmountIncome': 0.0,
+          'totalAmountExpenses': 0.0,
+        };
+      }
+    }
+
+    for (final data in expensesData) {
+      final date = data['todayDate'];
+      if (!groupedData.containsKey(date)) {
+        groupedData[date] = {
+          'todayDate': date,
+          'totalAmountBudget': 0.0,
+          'totalAmountIncome': 0.0,
+          'totalAmountExpenses': 0.0,
+        };
+      }
+    }
+
+    // Sum budget data by day
+    for (final data in budgetData) {
+      final date = data['todayDate'];
+      final budgetValue = data['totalAmountBudget'];
+      if (groupedData.containsKey(date)) {
+        groupedData[date]!['totalAmountBudget'] += budgetValue ?? 0.0;
+      }
+    }
+
+     // Sum income data by day
+    for (final data in incomeData) {
+      final date = data['todayDate'];
+      final incomeValue = data['totalAmountIncome'];
+      if (groupedData.containsKey(date)) {
+        groupedData[date]!['totalAmountIncome'] += incomeValue ?? 0.0;
+      }
+    }
+
+    // Sum expenses data by day
+    for (final data in expensesData) {
+      final date = data['todayDate'];
+      final expensesValue = data['totalAmountExpenses'];
+      if (groupedData.containsKey(date)) {
+        groupedData[date]!['totalAmountExpenses'] += expensesValue ?? 0.0;
+      }
+    }
+
+    return groupedData.values.toList();
   }
 
   @override
@@ -139,7 +136,6 @@ class _HistoryState extends State<History> {
               children: [
                 Text('My History'),
                 Spacer(),
-                // Text(formattedDateTime)
               ],
             )),
         body: ListView.builder(
@@ -153,7 +149,6 @@ class _HistoryState extends State<History> {
             final totalAmountIncome = historyData['totalAmountIncome'];
             final totalAmountExpenses = historyData['totalAmountExpenses'];
             print(totalAmountBudget);
-            print(totalAmountIncome);
 
             return Column(
               children: <Widget>[
@@ -169,11 +164,9 @@ class _HistoryState extends State<History> {
                     trailing: IconButton(
                         icon: Icon(Icons.remove_red_eye_rounded),
                         onPressed: () {
-                          _showTotalAmountDialog([
-                            totalAmountBudget,
-                            totalAmountIncome,
-                            totalAmountExpenses
-                          ]);
+                          _showTotalAmountDialog(totalAmountBudget ?? 0.0,
+                      totalAmountIncome ?? 0.0,
+                      totalAmountExpenses ?? 0.0,);
                         })),
                 const Divider(
                   // Add a Divider between each ListTile
@@ -186,7 +179,11 @@ class _HistoryState extends State<History> {
         ));
   }
 
-  void _showTotalAmountDialog(List<double?> amounts) {
+  void _showTotalAmountDialog(
+    double budgetAmount,
+    double incomeAmount,
+    double expensesAmount,
+  ) {
     showDialog(
         context: context,
         builder: (BuildContext context) {
@@ -196,9 +193,9 @@ class _HistoryState extends State<History> {
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                Text('Budget: Tsh ${amounts[0] ?? 0.0}'),
-                Text('Income: Tsh ${amounts[1] ?? 0.0}'),
-                Text('Expenses: Tsh ${amounts[2] ?? 0.0}'),
+                Text('Budget: Tsh $budgetAmount'),
+              Text('Income: Tsh $incomeAmount'),
+              Text('Expenses: Tsh $expensesAmount'),
               ],
             ),
             actions: <Widget>[
