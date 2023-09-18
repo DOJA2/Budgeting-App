@@ -10,39 +10,20 @@ class SplashPage extends StatefulWidget {
   _SplashPageState createState() => _SplashPageState();
 }
 
-class _SplashPageState extends State<SplashPage>
-    with TickerProviderStateMixin {
-  late final AnimationController _controller = AnimationController(
-    duration: const Duration(seconds: 2),
-    vsync: this,
-  )..repeat(reverse: true);
-  late final Animation<double> _animation = CurvedAnimation(
-    parent: _controller,
-    curve: Curves.ease,
-  );
-
-  startTimeout() {
-    return Timer(const Duration(seconds: 2), handleTimeout);
-  }
-
-  void handleTimeout() {
-    changeScreen();
-  }
-
-  changeScreen() async {
-    Future.delayed(const Duration(seconds: 1), () {
-    
-
- Navigator.of(context).pushReplacement(
-      MaterialPageRoute(builder: (context) => const LoginPage()), // Navigate to MyLogin page
-    );     
-    });
-  }
-
+class _SplashPageState extends State<SplashPage>{
   @override
   void initState() {
     super.initState();
-    startTimeout();
+    // Simulate a delay for the splash screen (e.g., loading resources or data).
+    Timer(Duration(seconds: 3), () {
+      // Navigate to your main page after the splash screen.
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (context) => LoginPage(),
+        ),
+      );
+    });
   }
 
   @override
@@ -54,7 +35,7 @@ class _SplashPageState extends State<SplashPage>
           body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
-          children: [
+          children: <Widget>[
             Icon(
               Icons.attach_money,
               size: 100,
@@ -69,6 +50,10 @@ class _SplashPageState extends State<SplashPage>
                 fontWeight: FontWeight.bold,
               ),
             ),
+            SizedBox(height: 110),
+            CircularProgressIndicator(
+                valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+              ),
           ],
         ),
       ),),
