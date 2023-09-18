@@ -3,13 +3,6 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'login.dart';
 
-
-
-
-
-
-
-
 class SplashPage extends StatefulWidget {
   const SplashPage({super.key});
 

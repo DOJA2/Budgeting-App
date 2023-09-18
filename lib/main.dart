@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-
-
 import 'Pages/splash.dart';
 
 
