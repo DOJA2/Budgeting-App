@@ -77,13 +77,14 @@ class BudgetPageState extends State<BudgetPage> {
     return Column(
       children: <Widget>[
         ListTile(
-          title: Text(item['duty']),
-          subtitle: Column(
+          title: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              Text(item['duty']),
               Text('Tsh ${item['amount']}'),
-              Text('Date: ${item['todayDate']}'),
             ],
           ),
+          subtitle: Text('Date: ${item['todayDate']}'),
           trailing: IconButton(
             icon: Icon(Icons.delete),
             onPressed: () => _deleteItem(item['id']),

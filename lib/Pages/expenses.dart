@@ -18,8 +18,6 @@ class _ExpensesPageState extends State<ExpensesPage> {
   List<Map<String, dynamic>> items = []; //fetch items created on database
   // String? duty;
   // double? amount;
-  
-  
 
   @override
   void initState() {
@@ -49,36 +47,36 @@ class _ExpensesPageState extends State<ExpensesPage> {
   }
 
   Future<void> addItemExpenses(
-    String duty, double amount, String? budgetItem) async {
-  if (budgetItem != null) {
-    // Convert budgetItem to its corresponding budget ID here
-    final budgetId = await getBudgetIdByName(budgetItem);
+      String duty, double amount, String? budgetItem) async {
+    if (budgetItem != null) {
+      // Convert budgetItem to its corresponding budget ID here
+      final budgetId = await getBudgetIdByName(budgetItem);
 
-    if (budgetId != null) {
-      await SQLHelper.createItemExpenses(duty, amount, budgetId);
-      await loadItems();
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Expenses added successfully.'),
-        ),
-      );
+      if (budgetId != null) {
+        await SQLHelper.createItemExpenses(duty, amount, budgetId);
+        await loadItems();
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Expenses added successfully.'),
+          ),
+        );
+      } else {
+        // Handle the case where budgetItem is not found
+        showDialog(
+          context: context,
+          builder: (BuildContext ctx) =>
+              AlertDialog(content: Text("Budget item not found.")),
+        );
+      }
     } else {
-      // Handle the case where budgetItem is not found
+      // Handle the case where budgetItem is null
       showDialog(
         context: context,
         builder: (BuildContext ctx) =>
-            AlertDialog(content: Text("Budget item not found.")),
+            AlertDialog(content: Text("Budget item is null.")),
       );
     }
-  } else {
-    // Handle the case where budgetItem is null
-    showDialog(
-      context: context,
-      builder: (BuildContext ctx) =>
-          AlertDialog(content: Text("Budget item is null.")),
-    );
   }
-}
 
   Future<int?> getBudgetIdByName(String budgetName) async {
     final db = await SQLHelper.db();
@@ -120,26 +118,32 @@ class _ExpensesPageState extends State<ExpensesPage> {
           ],
         ),
       ),
-       body: ListView.builder(
+      body: ListView.builder(
         itemCount: _items.length,
-        itemBuilder: (context,index) {
+        itemBuilder: (context, index) {
           final item = _items[index];
           return Column(
-            children: <Widget> [
+            children: <Widget>[
               ExpansionTile(
-                title: Text(item['selectedBudgetItem']?? ''),
+                title: Text(item['selectedBudgetItem'] ?? ''),
                 children: _items.map<Widget>((item) {
                   return Column(
                     children: <Widget>[
                       ListTile(
-                        title: Text(item['duty']),
-                        subtitle: Text(item['amount'].toString()),
+                        title: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(item['duty']),
+                            Text(item['amount'].toString()),
+                          ],
+                        ),
+                        subtitle: Text('Date: ${item['todayDate']}'),
                         trailing: IconButton(
-  icon: const Icon(Icons.delete),
-  onPressed: () {
-    // ...
-  },
-),
+                          icon: const Icon(Icons.delete),
+                          onPressed: () {
+                            // ...
+                          },
+                        ),
                       ),
                     ],
                   );
@@ -149,7 +153,6 @@ class _ExpensesPageState extends State<ExpensesPage> {
           );
         },
       ),
-  
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           // Show the AlertDialog to add expenses
@@ -242,7 +245,8 @@ class _ExpensesPageState extends State<ExpensesPage> {
                         print(selectedBudgetItem);
                         print(duty);
                         print(amount);
-                        Navigator.of(context).pop(); // You may want to close the dialog here
+                        Navigator.of(context)
+                            .pop(); // You may want to close the dialog here
                       } else {
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(

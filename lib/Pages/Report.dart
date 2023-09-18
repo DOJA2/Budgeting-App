@@ -3,22 +3,16 @@ import 'package:intl/intl.dart';
 import 'package:saving_money/database/budgetsql.dart';
 import 'package:path/path.dart' as path; // Import for join function
 import 'package:sqflite/sqflite.dart' as sql;
-// import 'package:saving_money/database/incomesql.dart';
-// import '../database/expensessql.dart';
-
 
 class ReportPage extends StatefulWidget {
   @override
   ReportPageState createState() => ReportPageState();
 }
 
-class ReportPageState extends State<ReportPage> { 
+class ReportPageState extends State<ReportPage> {
   double totalBudget = 0.0;
   double totalIncome = 0.0;
   double totalExpenses = 0.0;
-  // double budget = 1000.0; // Replace with your actual budget value
-  // double income = 5000.0; // Replace with your actual income value
-  // double expenses = 1800.0; // Replace with your actual expenses value
   double get savingAmount => totalIncome - totalExpenses;
   double get spendingAmount => totalBudget - totalExpenses;
   String formattedDateTime = ''; // This will hold the formatted date and time
@@ -56,13 +50,15 @@ class ReportPageState extends State<ReportPage> {
     final now = DateTime.now();
     formattedDateTime = DateFormat('EEE, MMM dd yyyy').format(now);
   }
+
   Future<void> fetchTotalBudget() async {
     final formatteTodayDate =
         DateFormat('yyyy-MM-dd').format(DateTime.now()).toString();
     try {
       final dbPath = await sql.getDatabasesPath();
       final db = await sql.openDatabase(path.join(dbPath, 'dbmoney.db'));
-      final totalBudget = await SQLHelper.getTotalAmountForDayBudget(formatteTodayDate);
+      final totalBudget =
+          await SQLHelper.getTotalAmountForDayBudget(formatteTodayDate);
       setState(() {
         this.totalBudget = totalBudget;
       });
@@ -78,7 +74,8 @@ class ReportPageState extends State<ReportPage> {
     try {
       final dbPath = await sql.getDatabasesPath();
       final db = await sql.openDatabase(path.join(dbPath, 'dbincome.db'));
-      final totalIncome = await SQLHelper.getTotalAmountForDayIncome(formatteTodayDate);
+      final totalIncome =
+          await SQLHelper.getTotalAmountForDayIncome(formatteTodayDate);
       setState(() {
         this.totalIncome = totalIncome;
       });
@@ -94,7 +91,8 @@ class ReportPageState extends State<ReportPage> {
     try {
       final dbPath = await sql.getDatabasesPath();
       final db = await sql.openDatabase(path.join(dbPath, 'expense.db'));
-      final totalExpenses = await SQLHelper.getTotalAmountForDayExpenses(formatteTodayDate);
+      final totalExpenses =
+          await SQLHelper.getTotalAmountForDayExpenses(formatteTodayDate);
       setState(() {
         this.totalExpenses = totalExpenses;
       });
@@ -106,6 +104,7 @@ class ReportPageState extends State<ReportPage> {
 
   @override
   Widget build(BuildContext context) {
+    final screenHeight = MediaQuery.of(context).size.height;
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
@@ -116,6 +115,7 @@ class ReportPageState extends State<ReportPage> {
         ]),
       ),
       body: Container(
+        height: screenHeight, // Set the height based on screen height
         padding: const EdgeInsets.all(20.0),
         decoration: BoxDecoration(
           color: Colors.grey[200],
@@ -136,8 +136,20 @@ class ReportPageState extends State<ReportPage> {
             SizedBox(height: 20),
             buildUnifiedAmountContainer(),
             SizedBox(height: 20),
+            Text(
+              '*Spending amount = Total Budget - Total Expenses',
+              style: const TextStyle(
+                fontWeight: FontWeight.bold,
+              ),
+            ),
             buildResultRow('Saving Amount', savingAmount, getSavingColor()),
             SizedBox(height: 20),
+            Text(
+              '*Saving amount = Total Income - Total Expenses',
+              style: const TextStyle(
+                fontWeight: FontWeight.bold,
+              ),
+            ),
             buildResultRow(
                 'Spending Amount', spendingAmount, getSpendingColor()),
           ],
@@ -158,7 +170,7 @@ class ReportPageState extends State<ReportPage> {
   }
 
   Widget buildUnifiedAmountContainer() {
-        return Container(
+    return Container(
       padding: const EdgeInsets.all(16.0),
       decoration: BoxDecoration(
         color: Colors.grey[200],
@@ -186,18 +198,6 @@ class ReportPageState extends State<ReportPage> {
   Widget buildAmountRow(String label, double amount) {
     return Padding(
       padding: const EdgeInsets.all(8.0),
-      // decoration: BoxDecoration(
-      //   color: Colors.grey[200],
-      //   borderRadius: BorderRadius.circular(1),
-      //   boxShadow: [
-      //     BoxShadow(
-      //       color: Colors.grey,
-      //       offset: Offset(0, 2),
-      //       blurRadius: 4,
-      //       spreadRadius: 0,
-      //     ),
-      //   ],
-      // ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
@@ -301,16 +301,3 @@ class ReportPageState extends State<ReportPage> {
     );
   }
 }
-
-// Future<void> getAmounts() async {
-//   await _fetchTotalBudget();
-//   await _fetchTotalIncome();
-//   await _fetchTotalExpenses();
-//   double savingAmount = totalIncome - totalExpenses;
-//   double spendingAmount = totalBudget - totalExpenses;
-//   setState(() {
-//     this.savingAmount = savingAmount;
-//     this.spendingAmount = spendingAmount;
-//   });
-// }
-
