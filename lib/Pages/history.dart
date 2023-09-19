@@ -129,6 +129,8 @@ class _HistoryState extends State<History> {
 
   @override
   Widget build(BuildContext context) {
+     // Reverse the _historyList to display items from new to old
+  final reversedHistoryList = _historyList.reversed.toList();
     return Scaffold(
         appBar: AppBar(
             automaticallyImplyLeading: false,
@@ -139,9 +141,9 @@ class _HistoryState extends State<History> {
               ],
             )),
         body: ListView.builder(
-          itemCount: _historyList.length,
+          itemCount: reversedHistoryList.length,
           itemBuilder: (context, index) {
-            final historyData = _historyList[index];
+            final historyData = reversedHistoryList[index];
             print(historyData);
             print('lets gooo');
             final date = historyData['todayDate'] as String;
