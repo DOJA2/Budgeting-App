@@ -74,7 +74,8 @@ class BudgetPageState extends State<BudgetPage> {
   itemCount: _items.length,
   itemBuilder: (context, index) {
     final item = _items[index];
-    return Column(
+  
+    return item['id'] == 1?Container(): Column(
       children: <Widget>[
         ListTile(
           title: Column(

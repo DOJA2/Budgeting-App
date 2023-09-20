@@ -42,6 +42,7 @@ class SQLHelper {
       onCreate: (sql.Database database, int version) async {
         print("...creating a table...");
         await createTables(database);
+        createItem('Others', 0.0);
       },
     );
   }
