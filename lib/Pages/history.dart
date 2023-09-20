@@ -197,7 +197,7 @@ class _HistoryState extends State<History> {
   final formattedIncomeAmount = numberFormat.format(incomeAmount);
   final formattedExpensesAmount = numberFormat.format(expensesAmount);
 
-  const symbolAndNumberSeparator = 'Tzs '; // Change this to your desired separator
+  const symbolAndNumberSeparator = 'TZS '; // Change this to your desired separator
 
     final amountFormattedWithSeparatorBudget = '$symbolAndNumberSeparator$formattedBudgetAmount';
     final amountFormattedWithSeparatorIncome = '$symbolAndNumberSeparator$formattedIncomeAmount';

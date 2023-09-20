@@ -190,7 +190,7 @@ final numberFormat = NumberFormat.currency(
     locale: 'en_US', // Use the appropriate locale for your currency formatting
   );
   final formattedAmount = numberFormat.format(amount);
-  const symbolAndNumberSeparator = 'Tzs '; // Change this to your desired separator
+  const symbolAndNumberSeparator = 'TZS '; // Change this to your desired separator
 
     final amountFormattedWithSeparator = '$symbolAndNumberSeparator$formattedAmount';
 
@@ -229,7 +229,7 @@ final numberFormat = NumberFormat.currency(
     locale: 'en_US',
   );
   final formattedAmount = numberFormat.format(amount);
-  const symbolAndNumberSeparator = 'Tzs '; // Change this to your desired separator
+  const symbolAndNumberSeparator = 'TZS '; // Change this to your desired separator
 
     final amountFormattedWithSeparator = '$symbolAndNumberSeparator$formattedAmount';
     

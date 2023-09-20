@@ -49,13 +49,20 @@ class _IncomePageState extends State<IncomePage> {
     await _loadItems();
   }
 
-  double _getTotalAmount() {
-    double total = 0;
-    for (final item in _items) {
-      total += item['amount'];
-    }
-    return total;
-  }
+  String formatAmount(double amount) {
+  final numberFormat = NumberFormat.currency(
+    symbol: '', // Currency symbol
+    decimalDigits: 2, // Number of decimal digits
+    locale: 'en_US', // Use the appropriate locale for your currency formatting
+  );
+
+  return numberFormat.format(amount);
+}
+
+  String getTotalAmountIncome() {
+  final total = _items.fold(0.0, (previous, item) => previous + item['amount']);
+  return formatAmount(total);
+}
 
   String capitalize(String text) {
   if (text.isEmpty) return text;
@@ -86,7 +93,7 @@ class _IncomePageState extends State<IncomePage> {
     ).format(item['amount']);
 
     // Add a symbolAndNumberSeparator
-    final symbolAndNumberSeparator = 'Tzs '; // Change this to your desired separator
+    final symbolAndNumberSeparator = 'TZS '; // Change this to your desired separator
 
     final amountFormattedWithSeparator = '$symbolAndNumberSeparator$amountFormatted';
 
@@ -171,7 +178,7 @@ class _IncomePageState extends State<IncomePage> {
           height: 50,
           child: Center(
             child: Text(
-              'Total Amount: Tzs ${_getTotalAmount()}',
+              'Total Amount: TZS ${getTotalAmountIncome()}',
               style: const TextStyle(fontSize: 20),
             ),
           ),

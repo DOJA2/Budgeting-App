@@ -97,13 +97,20 @@ class _ExpensesPageState extends State<ExpensesPage> {
     });
   }
 
-  double _getTotalAmountExpense() {
-    double total = 0;
-    for (final item in _items) {
-      total += item['amount'];
-    }
-    return total;
-  }
+  String formatAmount(double amount) {
+  final numberFormat = NumberFormat.currency(
+    symbol: '', // Currency symbol
+    decimalDigits: 2, // Number of decimal digits
+    locale: 'en_US', // Use the appropriate locale for your currency formatting
+  );
+
+  return numberFormat.format(amount);
+}
+
+  String getTotalAmountExpenses() {
+  final total = _items.fold(0.0, (previous, item) => previous + item['amount']);
+  return formatAmount(total);
+}
 
   @override
   Widget build(BuildContext context) {
@@ -125,7 +132,7 @@ class _ExpensesPageState extends State<ExpensesPage> {
           return Column(
             children: <Widget>[
               ExpansionTile(
-                title: Text(item['selectedBudgetItem'] ?? ''),
+                title: Text(item['selectedBudgetItem'] ?? 'Divide'),
                 children: _items.map<Widget>((item) {
                   return Column(
                     children: <Widget>[
@@ -137,7 +144,7 @@ class _ExpensesPageState extends State<ExpensesPage> {
                             Text(item['amount'].toString()),
                           ],
                         ),
-                        subtitle: Text('Date: ${item['todayDate']}'),
+                        subtitle: Text(formattedDateTime),
                         trailing: IconButton(
                           icon: const Icon(Icons.delete),
                           onPressed: () {
@@ -269,7 +276,7 @@ class _ExpensesPageState extends State<ExpensesPage> {
         height: 50,
         child: Center(
           child: Text(
-            'Total Amount: Tsh ${_getTotalAmountExpense()}',
+            'Total Amount: Tsh ${getTotalAmountExpenses()}',
             style: TextStyle(fontSize: 20),
           ),
         ),

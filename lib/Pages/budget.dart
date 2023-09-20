@@ -49,13 +49,20 @@ class BudgetPageState extends State<BudgetPage> {
     await _loadItems();
   }
 
-  double getTotalAmount() {
-    double total = 0;
-    for (final item in _items) {
-      total += item['amount'];
-    }
-    return total;
-  }
+  String formatAmount(double amount) {
+  final numberFormat = NumberFormat.currency(
+    symbol: '', // Currency symbol
+    decimalDigits: 2, // Number of decimal digits
+    locale: 'en_US', // Use the appropriate locale for your currency formatting
+  );
+
+  return numberFormat.format(amount);
+}
+
+  String getTotalAmountBudget() {
+  final total = _items.fold(0.0, (previous, item) => previous + item['amount']);
+  return formatAmount(total);
+}
 
   String capitalize(String text) {
   if (text.isEmpty) return text;
@@ -86,7 +93,7 @@ class BudgetPageState extends State<BudgetPage> {
     ).format(item['amount']);
 
     // Add a symbolAndNumberSeparator
-    const symbolAndNumberSeparator = 'Tzs '; // Change this to your desired separator
+    const symbolAndNumberSeparator = 'TZS '; // Change this to your desired separator
 
     final amountFormattedWithSeparator = '$symbolAndNumberSeparator$amountFormatted';
 
@@ -169,7 +176,7 @@ class BudgetPageState extends State<BudgetPage> {
           height: 50,
           child: Center(
             child: Text(
-              'Total Amount: Tzs ${getTotalAmount()}',
+              'Total Amount: TZS ${getTotalAmountBudget()}',
               style: TextStyle(fontSize: 20),
             ),
           ),
