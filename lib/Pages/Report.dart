@@ -136,20 +136,8 @@ class ReportPageState extends State<ReportPage> {
             SizedBox(height: 20),
             buildUnifiedAmountContainer(),
             SizedBox(height: 20),
-            Text(
-              '*Spending amount = Total Budget - Total Expenses',
-              style: const TextStyle(
-                fontWeight: FontWeight.bold,
-              ),
-            ),
             buildResultRow('Saving Amount', savingAmount, getSavingColor()),
             SizedBox(height: 20),
-            Text(
-              '*Saving amount = Total Income - Total Expenses',
-              style: const TextStyle(
-                fontWeight: FontWeight.bold,
-              ),
-            ),
             buildResultRow(
                 'Spending Amount', spendingAmount, getSpendingColor()),
           ],
@@ -196,6 +184,16 @@ class ReportPageState extends State<ReportPage> {
   }
 
   Widget buildAmountRow(String label, double amount) {
+final numberFormat = NumberFormat.currency(
+    symbol: '', // Currency symbol
+    decimalDigits: 2, // Number of decimal digits
+    locale: 'en_US', // Use the appropriate locale for your currency formatting
+  );
+  final formattedAmount = numberFormat.format(amount);
+  const symbolAndNumberSeparator = 'Tzs '; // Change this to your desired separator
+
+    final amountFormattedWithSeparator = '$symbolAndNumberSeparator$formattedAmount';
+
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: Row(
@@ -209,7 +207,7 @@ class ReportPageState extends State<ReportPage> {
             ),
           ),
           Text(
-            'Tsh ${amount.toStringAsFixed(2)}',
+            amountFormattedWithSeparator,
             style: const TextStyle(
               fontSize: 18,
               //fontWeight: FontWeight.bold,
@@ -225,6 +223,16 @@ class ReportPageState extends State<ReportPage> {
     String message = '';
     Color messageColor = Colors.black; // Initialize with a default color
     String hint = '';
+     final numberFormat = NumberFormat.currency(
+    symbol: '',
+    decimalDigits: 2,
+    locale: 'en_US',
+  );
+  final formattedAmount = numberFormat.format(amount);
+  const symbolAndNumberSeparator = 'Tzs '; // Change this to your desired separator
+
+    final amountFormattedWithSeparator = '$symbolAndNumberSeparator$formattedAmount';
+    
 
     if (label == 'Saving Amount') {
       if (amount > 0) {
@@ -277,7 +285,7 @@ class ReportPageState extends State<ReportPage> {
                 ),
                 const SizedBox(height: 5), // Add some space
                 Text(
-                  'Tsh ${amount.toStringAsFixed(2)}',
+                  amountFormattedWithSeparator,
                   style: TextStyle(
                     fontSize: 20,
                     //fontWeight: FontWeight.bold,

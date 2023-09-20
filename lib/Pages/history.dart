@@ -186,6 +186,23 @@ class _HistoryState extends State<History> {
     double incomeAmount,
     double expensesAmount,
   ) {
+
+    final numberFormat = NumberFormat.currency(
+    symbol: '', // Currency symbol
+    decimalDigits: 2, // Number of decimal digits
+    locale: 'en_US', // Use the appropriate locale for your currency formatting
+  );
+
+  final formattedBudgetAmount = numberFormat.format(budgetAmount);
+  final formattedIncomeAmount = numberFormat.format(incomeAmount);
+  final formattedExpensesAmount = numberFormat.format(expensesAmount);
+
+  const symbolAndNumberSeparator = 'Tzs '; // Change this to your desired separator
+
+    final amountFormattedWithSeparatorBudget = '$symbolAndNumberSeparator$formattedBudgetAmount';
+    final amountFormattedWithSeparatorIncome = '$symbolAndNumberSeparator$formattedIncomeAmount';
+    final amountFormattedWithSeparatorExpenses = '$symbolAndNumberSeparator$formattedExpensesAmount';
+
     showDialog(
         context: context,
         builder: (BuildContext context) {
@@ -195,9 +212,9 @@ class _HistoryState extends State<History> {
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                Text('Budget: Tsh $budgetAmount'),
-              Text('Income: Tsh $incomeAmount'),
-              Text('Expenses: Tsh $expensesAmount'),
+                Text('Budget: $amountFormattedWithSeparatorBudget'),
+              Text('Income: $amountFormattedWithSeparatorIncome'),
+              Text('Expenses: $amountFormattedWithSeparatorExpenses'),
               ],
             ),
             actions: <Widget>[

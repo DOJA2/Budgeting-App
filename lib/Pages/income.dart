@@ -57,6 +57,11 @@ class _IncomePageState extends State<IncomePage> {
     return total;
   }
 
+  String capitalize(String text) {
+  if (text.isEmpty) return text;
+  return text[0].toUpperCase() + text.substring(1);
+}
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -74,17 +79,30 @@ class _IncomePageState extends State<IncomePage> {
   itemCount: _items.length,
   itemBuilder: (context, index) {
     final item = _items[index];
+    final amountFormatted = NumberFormat.currency(
+      symbol: '', // Currency symbol
+      decimalDigits: 2, // Number of decimal digits
+      locale: 'en_US', // Use the appropriate locale for your currency formatting
+    ).format(item['amount']);
+
+    // Add a symbolAndNumberSeparator
+    final symbolAndNumberSeparator = 'Tzs '; // Change this to your desired separator
+
+    final amountFormattedWithSeparator = '$symbolAndNumberSeparator$amountFormatted';
+
+    final capitalDutyIncome = capitalize(item['duty']); // Capit
+
     return Column(
       children: <Widget>[
         ListTile(
           title: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(item['duty']),
-              Text('Tsh ${item['amount']}'),
+              Text(capitalDutyIncome),
+              Text(amountFormattedWithSeparator),
             ],
           ),
-          subtitle: Text('Date: ${item['todayDate']}'),
+          subtitle: Text(formattedDateTime),
           trailing: IconButton(
             icon: Icon(Icons.delete),
             onPressed: () => _deleteItem(item['id']),
@@ -153,7 +171,7 @@ class _IncomePageState extends State<IncomePage> {
           height: 50,
           child: Center(
             child: Text(
-              'Total Amount: Tsh ${_getTotalAmount()}',
+              'Total Amount: Tzs ${_getTotalAmount()}',
               style: const TextStyle(fontSize: 20),
             ),
           ),

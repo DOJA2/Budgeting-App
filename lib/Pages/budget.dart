@@ -57,6 +57,11 @@ class BudgetPageState extends State<BudgetPage> {
     return total;
   }
 
+  String capitalize(String text) {
+  if (text.isEmpty) return text;
+  return text[0].toUpperCase() + text.substring(1);
+}
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -74,6 +79,18 @@ class BudgetPageState extends State<BudgetPage> {
   itemCount: _items.length,
   itemBuilder: (context, index) {
     final item = _items[index];
+     final amountFormatted = NumberFormat.currency(
+      symbol: '', // Currency symbol
+      decimalDigits: 2, // Number of decimal digits
+      locale: 'en_US', // Use the appropriate locale for your currency formatting
+    ).format(item['amount']);
+
+    // Add a symbolAndNumberSeparator
+    const symbolAndNumberSeparator = 'Tzs '; // Change this to your desired separator
+
+    final amountFormattedWithSeparator = '$symbolAndNumberSeparator$amountFormatted';
+
+    final capitalDutyBudget = capitalize(item['duty']); // Capitalize the duty
   
     return item['id'] == 1?Container(): Column(
       children: <Widget>[
@@ -81,11 +98,11 @@ class BudgetPageState extends State<BudgetPage> {
           title: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(item['duty']),
-              Text('Tsh ${item['amount']}'),
+              Text(capitalDutyBudget),
+              Text(amountFormattedWithSeparator),
             ],
           ),
-          subtitle: Text('Date: ${item['todayDate']}'),
+          subtitle: Text(formattedDateTime),
           trailing: IconButton(
             icon: Icon(Icons.delete),
             onPressed: () => _deleteItem(item['id']),
@@ -152,7 +169,7 @@ class BudgetPageState extends State<BudgetPage> {
           height: 50,
           child: Center(
             child: Text(
-              'Total Amount: Tsh ${getTotalAmount()}',
+              'Total Amount: Tzs ${getTotalAmount()}',
               style: TextStyle(fontSize: 20),
             ),
           ),
