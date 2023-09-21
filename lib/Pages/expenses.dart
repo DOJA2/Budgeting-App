@@ -24,6 +24,7 @@ class _ExpensesPageState extends State<ExpensesPage> {
     super.initState();
     updateDateTime();
     fetchBudgetItemsForToday();
+    loadItems();
   }
 
   void updateDateTime() {
@@ -55,6 +56,7 @@ class _ExpensesPageState extends State<ExpensesPage> {
       if (budgetId != null) {
         await SQLHelper.createItemExpenses(duty, amount, budgetId);
         await loadItems();
+        await fetchBudgetItemsForToday(); // Refresh budgetItems list.
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('Expenses added successfully.'),
@@ -90,7 +92,7 @@ class _ExpensesPageState extends State<ExpensesPage> {
 
   List<String> budgetItems = []; //fetch budgetItem
 
-  void fetchBudgetItemsForToday() async {
+  Future<void> fetchBudgetItemsForToday() async {
     final dutyNames = await SQLHelper.getDutyNamesForToday();
     setState(() {
       budgetItems = dutyNames;
@@ -98,19 +100,20 @@ class _ExpensesPageState extends State<ExpensesPage> {
   }
 
   String formatAmount(double amount) {
-  final numberFormat = NumberFormat.currency(
-    symbol: '', // Currency symbol
-    decimalDigits: 2, // Number of decimal digits
-    locale: 'en_US', // Use the appropriate locale for your currency formatting
-  );
-
-  return numberFormat.format(amount);
-}
+    final numberFormat = NumberFormat.currency(
+      symbol: '', // Currency symbol
+      decimalDigits: 2, // Number of decimal digits
+      locale:
+          'en_US', // Use the appropriate locale for your currency formatting
+    );
+    return numberFormat.format(amount);
+  }
 
   String getTotalAmountExpenses() {
-  final total = _items.fold(0.0, (previous, item) => previous + item['amount']);
-  return formatAmount(total);
-}
+    final total =
+        _items.fold(0.0, (previous, item) => previous + item['amount']);
+    return formatAmount(total);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -126,37 +129,34 @@ class _ExpensesPageState extends State<ExpensesPage> {
         ),
       ),
       body: ListView.builder(
-        itemCount: _items.length,
+        itemCount: budgetItems.length,
         itemBuilder: (context, index) {
-          final item = _items[index];
-          return Column(
-            children: <Widget>[
-              ExpansionTile(
-                title: Text(item['selectedBudgetItem'] ?? 'Divide'),
-                children: _items.map<Widget>((item) {
-                  return Column(
-                    children: <Widget>[
-                      ListTile(
-                        title: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(item['duty']),
-                            Text(item['amount'].toString()),
-                          ],
-                        ),
-                        subtitle: Text(formattedDateTime),
-                        trailing: IconButton(
-                          icon: const Icon(Icons.delete),
-                          onPressed: () {
-                            // ...
-                          },
-                        ),
-                      ),
-                    ],
-                  );
-                }).toList(),
-              ),
-            ],
+          final budgetItem = budgetItems[index];
+          final expensesForBudget = _items
+              .where((item) => item['budget_duty'] == budgetItem)
+              .toList();
+              
+          print(budgetItem);
+          print(expensesForBudget);
+
+          return ExpansionTile(
+            title: Text(budgetItem),
+            children: expensesForBudget.map<Widget>((expense) {
+              final expenseName = expense['duty'];
+              final expenseAmount = expense['amount'];
+              print(expenseName);
+
+              return ListTile(
+                title: Text(expenseName),
+                subtitle: Text('Amount: ${formatAmount(expenseAmount)}'),
+                trailing: IconButton(
+                  icon: const Icon(Icons.delete),
+                  onPressed: () {
+                    // ...
+                  },
+                ),
+              );
+            }).toList(),
           );
         },
       ),
