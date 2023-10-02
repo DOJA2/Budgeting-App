@@ -30,10 +30,12 @@ class BudgetPageState extends State<BudgetPage> {
 
   Future<void> _loadItems() async {
     final db = await SQLHelper.db();
-    final formatteTodayDate =
+    final formattedTodayDate =
         DateFormat('yyyy-MM-dd').format(DateTime.now()).toString();
-    final items = await db.query('budget', where: "todayDate = ?",
-        whereArgs: [formatteTodayDate], orderBy: 'createdAt DESC');
+    final items = await db.query('budget', 
+    where: "todayDate = ?",
+        whereArgs: [formattedTodayDate],
+         orderBy: 'createdAt DESC');
     setState(() {
       _items = items;
     });

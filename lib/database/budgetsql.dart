@@ -50,6 +50,7 @@ class SQLHelper {
   // BUDGET FUNCTION
 
   static Future<int> createItem(String duty, double amount) async {
+    print("Inserting default budget::::::::::::::::::::");
     final todayDate =
         DateFormat('yyyy-MM-dd').format(DateTime.now()).toString();
 
